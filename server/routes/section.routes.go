@@ -8,5 +8,5 @@ import (
 func ApiRoutes(app fiber.Router) {
 	r := app.Group("/api")
 
-	r.Get("/allSections/*", services.GetSections)
+	r.Get("/allSections", services.GetSectionsInYearSemester)
 }
