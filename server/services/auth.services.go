@@ -4,7 +4,6 @@ import (
 	"css325_registration/db"
 	"css325_registration/models"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -37,9 +36,6 @@ func Login(c *fiber.Ctx) error {
 	if err := c.BodyParser(input); err != nil {
 		return err
 	}
-
-	log.Debug(input.StudentId)
-	log.Debug(input.Password)
 
 	studentData, err := getStudentFromId(input.StudentId)
 
