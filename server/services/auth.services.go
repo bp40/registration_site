@@ -13,9 +13,9 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func getStudentFromId(id string) (*models.Student, error) {
-	var student models.Student
-	stmt, err := db.DB.Preparex(`SELECT * FROM students WHERE student_id = ?`)
+func getStudentFromId(id string) (*models.AuthStudent, error) {
+	var student models.AuthStudent
+	stmt, err := db.DB.Preparex(`SELECT student_id, password FROM students WHERE student_id = ?`)
 	err = stmt.Get(&student, id)
 
 	if err != nil {
@@ -28,7 +28,7 @@ func getStudentFromId(id string) (*models.Student, error) {
 func Login(c *fiber.Ctx) error {
 
 	type loginInput struct {
-		StudentId string `json:"student_id" xml:"student_id" form:"student_id"`
+		StudentId string `json:"StudentId" xml:"StudentId" form:"StudentId"`
 		Password  string `json:"password" xml:"password" form:"password"`
 	}
 
