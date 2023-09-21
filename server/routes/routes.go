@@ -8,19 +8,20 @@ import (
 
 func SetupRoutes(app fiber.Router) {
 
+	// AUTH
+	auth := app.Group("/auth")
+	auth.Post("/login", services.Login)
+
+	app.Use(middleware.Protected())
 	// API
 	api := app.Group("/api")
 	api.Get("/allSections/", services.GetSectionsInYearSemester)
 	api.Get("/sections/:name", services.GetSectionsByCourseName)
 
-	// AUTH
-	auth := app.Group("/auth")
-	auth.Post("/login", services.Login)
-
 	// STUDENTS
 	student := app.Group("/student")
 	student.Get("/:id", services.GetStudentsById)
-	student.Post("/", services.CreateStudent)
-	student.Patch("/:id", middleware.Protected(), services.UpdateStudent)
-	student.Delete("/:id", middleware.Protected(), services.DeleteStudent)
+	student.Post("/", middleware.VerifyStaff(), services.CreateStudent)
+	student.Patch("/:id", services.UpdateStudent)
+	student.Delete("/:id", services.DeleteStudent)
 }

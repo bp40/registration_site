@@ -4,7 +4,10 @@ import (
 	"css325_registration/db"
 	"css325_registration/models"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
+	"os"
+	"time"
 )
 
 func CheckPasswordHash(password, hash string) bool {
@@ -47,5 +50,17 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "failed", "message": "invalid password"})
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "login success"})
+	token := jwt.New(jwt.SigningMethodHS256)
+
+	claims := token.Claims.(jwt.MapClaims)
+	claims["id"] = input.StudentId
+	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+	claims["role"] = "student"
+
+	t, err := token.SignedString([]byte(os.Getenv("JWTSIGN")))
+	if err != nil {
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	return c.JSON(fiber.Map{"status": "success", "message": "login success", "token": t})
 }

@@ -3,15 +3,32 @@ package middleware
 import (
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"os"
 )
 
-// Protected protect routes
 func Protected() fiber.Handler {
 	return jwtware.New(jwtware.Config{
-		SigningKey:   jwtware.SigningKey{Key: []byte(os.Getenv("JWTKEY"))},
+		SigningKey:   jwtware.SigningKey{Key: []byte(os.Getenv("JWTSIGN"))},
 		ErrorHandler: jwtError,
 	})
+}
+
+func VerifyStaff() fiber.Handler {
+	return func(c *fiber.Ctx) error {
+
+		user := c.Locals("user").(*jwt.Token)
+		claims := user.Claims.(jwt.MapClaims)
+		role := claims["role"].(string)
+
+		if role != "staff" {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message": "Unauthorized access",
+			})
+		}
+
+		return c.Next()
+	}
 }
 
 func jwtError(c *fiber.Ctx, err error) error {
