@@ -3,7 +3,6 @@ package services
 import (
 	"css325_registration/db"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
@@ -38,14 +37,9 @@ func CreateStudent(c *fiber.Ctx) error {
 	input.EnrollYear = time.Now().Year()
 	input.Password, _ = hashPassword(input.Password)
 
-	log.Debug(input.FirstName)
-	log.Debug(input.DateOfBirth)
-
 	_, err := db.DB.NamedExec(`INSERT INTO students (
                       first_name, last_name, date_of_birth, sex, password, enroll_year, level)
 					VALUES (:first_name, :last_name, :date_of_birth, :sex, :password, :enroll_year, :level)`, &input)
-
-	log.Debug(err)
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "failed", "message": "failed to create student"})
