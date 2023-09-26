@@ -8,6 +8,9 @@ import (
 
 func SetupRoutes(app fiber.Router) {
 
+	// HOME
+	app.Static("/", "../client/registration_site/dist")
+
 	// AUTH
 	auth := app.Group("/auth")
 	auth.Post("/login", services.Login)
@@ -15,8 +18,9 @@ func SetupRoutes(app fiber.Router) {
 	app.Use(middleware.Protected())
 	// API
 	api := app.Group("/api")
-	api.Get("/allSections/", services.GetSectionsInYearSemester)
+	api.Get("/sections/:semester/:year", services.GetSectionsInYearSemester)
 	api.Get("/sections/:name", services.GetSectionsByCourseName)
+	api.Get("/sections/:courseCode", services.GetSectionsByCourseCode)
 
 	// STUDENTS
 	student := app.Group("/student")

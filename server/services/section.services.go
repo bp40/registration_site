@@ -9,8 +9,8 @@ import (
 )
 
 func GetSectionsInYearSemester(c *fiber.Ctx) error {
-	year := c.QueryInt("year")
-	semester := c.QueryInt("semester")
+	year, _ := c.ParamsInt("year")
+	semester, _ := c.ParamsInt("semester")
 
 	if year == 0 {
 		year = time.Now().Year()
@@ -50,7 +50,17 @@ func GetSectionsByCourseName(c *fiber.Ctx) error {
 }
 
 func GetSectionsByCourseCode(c *fiber.Ctx) error {
-	return fiber.ErrNotImplemented
+	courseCode := c.Params("course_code")
+
+	var sections []models.Section
+	stmt, err := db.DB.Preparex(`SELECT * FROM sections WHERE course_code = ?`)
+	err = stmt.Select(&sections, courseCode)
+
+	if err != nil {
+		return fiber.ErrInternalServerError
+	}
+
+	return c.JSON(sections)
 }
 
 func GetSectionsByDepartment(c *fiber.Ctx) error {

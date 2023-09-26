@@ -18,7 +18,6 @@ func main() {
 
 	db.InitDb()
 
-	app.Static("/", "../client/registration_site/dist")
 	routes.SetupRoutes(app)
 
 	app.Listen(":3000")
