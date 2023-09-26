@@ -26,6 +26,10 @@ func SetupRoutes(app fiber.Router) {
 	student := app.Group("/student")
 	student.Get("/:id", services.GetStudentsById)
 	student.Post("/", middleware.VerifyStaff(), services.CreateStudent)
-	student.Patch("/:id", services.UpdateStudent)
-	student.Delete("/:id", services.DeleteStudent)
+	student.Patch("/:id", middleware.VerifyStaff(), services.UpdateStudent)
+	student.Delete("/:id", middleware.VerifyStaff(), services.DeleteStudent)
+
+	// REGISTRATIONS
+	register := app.Group("/register")
+	register.Post("/")
 }
