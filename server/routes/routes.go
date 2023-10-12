@@ -31,5 +31,5 @@ func SetupRoutes(app fiber.Router) {
 
 	// REGISTRATIONS
 	register := app.Group("/register")
-	register.Post("/")
+	register.Post("/", services.RegisterCourses)
 }

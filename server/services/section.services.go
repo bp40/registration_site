@@ -8,6 +8,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func GetSectionById(id int) (models.Section, error) {
+	var section models.Section
+	stmt, err := db.DB.Preparex(`SELECT * FROM sections WHERE id=?`)
+	err = stmt.Select(&section, id)
+
+	if err != nil {
+		return section, err
+	}
+
+	return section, nil
+
+}
+
 func GetSectionsInYearSemester(c *fiber.Ctx) error {
 	year, _ := c.ParamsInt("year")
 	semester, _ := c.ParamsInt("semester")
