@@ -1,8 +1,8 @@
 package util
 
-func IntSliceContains(s []int, e int) bool {
-	for _, a := range s {
-		if a == e {
+func IntSliceContains(slice []int, e int) bool {
+	for _, n := range slice {
+		if n == e {
 			return true
 		}
 	}

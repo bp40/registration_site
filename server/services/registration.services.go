@@ -6,6 +6,7 @@ import (
 	"css325_registration/utils"
 	"errors"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"strings"
@@ -35,24 +36,26 @@ func checkStudentCapacityOK(sectionId string) bool {
 }
 
 func checkAvailability(sectionIds []int) error {
-
+	//THIS IS BROKEN ATM. sectionID doesnt really work
 	query, args, err := sqlx.In("SELECT * FROM sections WHERE section_id IN (?)", sectionIds)
 	if err != nil {
 		return err
 	}
-
 	var sections []models.Section
 
 	err = db.DB.Select(&sections, db.DB.Rebind(query), args)
 	if err != nil {
+		log.Error(err)
 		return err
 	}
-
 	var timeslotList []int
 
 	for _, section := range sections {
+		log.Debug(section.Timeslot)
 		if !util.IntSliceContains(timeslotList, section.Timeslot) {
 			return errors.New("Timeslot overlap")
+		} else {
+			timeslotList = append(timeslotList, section.Timeslot)
 		}
 		if !checkStudentCapacityOK(section.Id) {
 			return errors.New("Section is full")
@@ -65,17 +68,27 @@ func checkAvailability(sectionIds []int) error {
 
 func RegisterCourses(c *fiber.Ctx) error {
 
-	studentId := c.QueryInt("student_id")
-	allSectionsCSV := c.Query("allSections")
+	type registerRequest struct {
+		StudentId      int    `json:"student_id" form:"student_id"`
+		AllSectionsCSV string `json:"all_sections_csv" form:"all_sections_csv"`
+	}
 
-	sectionStrings := strings.Split(allSectionsCSV, ",")
+	req := new(registerRequest)
+	if err := c.BodyParser(req); err != nil {
+		return fiber.ErrBadRequest
+	}
+
+	sectionStrings := strings.Split(req.AllSectionsCSV, ",")
+	log.Debug(sectionStrings)
 
 	var sectionIds []int
 
-	for _, sectionId := range sectionStrings {
-		id, err := strconv.Atoi(sectionId)
+	for _, secId := range sectionStrings {
+		id, err := strconv.Atoi(secId)
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "failed"})
+			log.Debug(err)
+			log.Debug(id)
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error parsing section"})
 		}
 		sectionIds = append(sectionIds, id)
 	}
@@ -83,19 +96,19 @@ func RegisterCourses(c *fiber.Ctx) error {
 	err := checkAvailability(sectionIds)
 
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "timeslot overlap"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "timeslot overlap", "err": err})
 	}
 
 	for _, id := range sectionIds {
 		section, err := GetSectionById(id)
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "failed"})
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail getting section id"})
 		}
 
 		query := "INSERT INTO registrations (student_id, section_id, status, grade, registration_time) VALUES (?,?,?,?,?)"
 		datetime := time.Now().Format(time.RFC3339)
 		tx := db.DB.MustBegin()
-		db.DB.MustExec(query, studentId, section.Id, "ENROLLED", nil, datetime)
+		db.DB.MustExec(query, req.StudentId, section.Id, "ENROLLED", nil, datetime)
 		err = tx.Commit()
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "TX failed"})
