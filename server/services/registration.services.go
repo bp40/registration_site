@@ -3,7 +3,7 @@ package services
 import (
 	"css325_registration/db"
 	"css325_registration/models"
-	"css325_registration/utils"
+	util "css325_registration/utils"
 	"errors"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
@@ -35,32 +35,48 @@ func checkStudentCapacityOK(sectionId string) bool {
 
 }
 
-func checkAvailability(sectionIds []int) error {
-	//THIS IS BROKEN ATM. sectionID doesnt really work
-	query, args, err := sqlx.In("SELECT * FROM sections WHERE section_id IN (?)", sectionIds)
+func checkAvailability(sectionIds []int, studentId int) error {
+
+	query, args, err := sqlx.In("SELECT * FROM sections WHERE section_id IN (?);", sectionIds)
+	query = db.DB.Rebind(query)
 	if err != nil {
 		return err
 	}
-	var sections []models.Section
 
-	err = db.DB.Select(&sections, db.DB.Rebind(query), args)
+	enrolledSectionIds, err := StudentEnrolledSectionsId(studentId)
 	if err != nil {
-		log.Error(err)
+		log.Debug("cannot get enrolled sections")
 		return err
 	}
 	var timeslotList []int
+	var enrolledIds []string
 
-	for _, section := range sections {
-		log.Debug(section.Timeslot)
-		if !util.IntSliceContains(timeslotList, section.Timeslot) {
-			return errors.New("Timeslot overlap")
-		} else {
-			timeslotList = append(timeslotList, section.Timeslot)
+	for _, sec := range enrolledSectionIds {
+		enrolledIds = append(enrolledIds, sec.Id)
+		timeslotList = append(timeslotList, sec.Timeslot)
+	}
+
+	rows, err := db.DB.Queryx(query, args...)
+
+	for rows.Next() {
+		var section models.Section
+		err = rows.StructScan(&section)
+
+		//check duplicate timeslot
+		if util.SliceContains(timeslotList, section.Timeslot) {
+			return errors.New("timeslot overlap timeslot:" + string(rune(section.Timeslot)))
 		}
+
+		//check duplicate section
+		if util.SliceContains(enrolledIds, section.Id) {
+			return errors.New("already enrolled in section: " + section.Id)
+		}
+
 		if !checkStudentCapacityOK(section.Id) {
-			return errors.New("Section is full")
+			return errors.New("section full id:" + section.Id)
 		}
 
+		timeslotList = append(timeslotList, section.Timeslot)
 	}
 
 	return nil
@@ -79,7 +95,6 @@ func RegisterCourses(c *fiber.Ctx) error {
 	}
 
 	sectionStrings := strings.Split(req.AllSectionsCSV, ",")
-	log.Debug(sectionStrings)
 
 	var sectionIds []int
 
@@ -93,18 +108,19 @@ func RegisterCourses(c *fiber.Ctx) error {
 		sectionIds = append(sectionIds, id)
 	}
 
-	err := checkAvailability(sectionIds)
-
+	err := checkAvailability(sectionIds, req.StudentId)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "timeslot overlap", "err": err})
+		log.Debug(err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "not available", "err": err.Error()})
 	}
-
+	log.Info("Passed availability test")
 	for _, id := range sectionIds {
+		log.Info("get id")
 		section, err := GetSectionById(id)
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail getting section id"})
 		}
-
+		log.Info("id found")
 		query := "INSERT INTO registrations (student_id, section_id, status, grade, registration_time) VALUES (?,?,?,?,?)"
 		datetime := time.Now().Format(time.RFC3339)
 		tx := db.DB.MustBegin()
@@ -113,6 +129,7 @@ func RegisterCourses(c *fiber.Ctx) error {
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "TX failed"})
 		}
+		log.Info("tx complete")
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"status": "registration success!"})

@@ -2,7 +2,9 @@ package services
 
 import (
 	"css325_registration/db"
+	"css325_registration/models"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
@@ -54,4 +56,26 @@ func UpdateStudent(c *fiber.Ctx) error {
 
 func DeleteStudent(c *fiber.Ctx) error {
 	return fiber.ErrNotImplemented
+}
+
+func StudentEnrolledSectionsId(studentId int) ([]models.SimpleSection, error) {
+
+	var semester int
+
+	if time.Now().Month() >= 6 && time.Now().Month() <= 12 {
+		semester = 1
+	} else {
+		semester = 2
+	}
+
+	var sections []models.SimpleSection
+	log.Debug("querying registrations")
+	stmt, err := db.DB.Preparex("SELECT registrations.section_id, timeslot_id FROM registrations JOIN sections ON registrations.section_id = sections.section_id WHERE registrations.student_id=? AND sections.semester=? AND sections.year=?")
+	err = stmt.Select(&sections, studentId, semester, time.Now().Year())
+	if err != nil {
+		log.Debug("query error student registrations")
+		return sections, err
+	}
+
+	return sections, nil
 }

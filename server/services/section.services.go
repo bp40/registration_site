@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/gofiber/fiber/v2/log"
 	"time"
 
 	"css325_registration/db"
@@ -10,10 +11,18 @@ import (
 
 func GetSectionById(id int) (models.Section, error) {
 	var section models.Section
-	stmt, err := db.DB.Preparex(`SELECT * FROM sections WHERE id=?`)
-	err = stmt.Select(&section, id)
+	//stmt, err := db.DB.Preparex(`SELECT * FROM sections WHERE id=?`)
+	//err = stmt.Select(&section, id)
+
+	rows, err := db.DB.Queryx("SELECT * FROM sections WHERE section_id=?", id)
+
+	for rows.Next() {
+		err = rows.StructScan(&section)
+	}
 
 	if err != nil {
+		log.Error("GetSectionById error")
+		log.Error(err)
 		return section, err
 	}
 
