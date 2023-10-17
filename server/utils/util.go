@@ -1,8 +1,8 @@
 package util
 
-func IntSliceContains(slice []int, e int) bool {
-	for _, n := range slice {
-		if n == e {
+func SliceContains[T comparable](slice []T, e T) bool {
+	for _, item := range slice {
+		if item == e {
 			return true
 		}
 	}
