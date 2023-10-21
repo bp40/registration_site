@@ -21,6 +21,7 @@ func checkStudentCapacityOK(sectionId string) bool {
 	err = stmt.Select(currentStudents, sectionId, "ENROLLED")
 
 	if err != nil {
+		log.Debug("failed to get enrolled courses")
 		return false
 	}
 
@@ -28,8 +29,10 @@ func checkStudentCapacityOK(sectionId string) bool {
 	err = stmt.Select(maxStudents, sectionId)
 
 	if currentStudents < maxStudents {
+		log.Debug("curr std < max")
 		return true
 	} else {
+		log.Debug("curr std > max")
 		return false
 	}
 
@@ -93,7 +96,6 @@ func RegisterCourses(c *fiber.Ctx) error {
 	if err := c.BodyParser(req); err != nil {
 		return fiber.ErrBadRequest
 	}
-
 	sectionStrings := strings.Split(req.AllSectionsCSV, ",")
 
 	var sectionIds []int

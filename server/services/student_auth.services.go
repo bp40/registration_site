@@ -4,9 +4,11 @@ import (
 	"css325_registration/db"
 	"css325_registration/models"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -63,4 +65,17 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{"status": "success", "message": "login success", "token": t})
+}
+
+func getIdFromJWT(c *fiber.Ctx) int {
+
+	user := c.Locals("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	id, err := strconv.Atoi(claims["id"].(string))
+
+	if err != nil {
+		log.Debug("id from jwt err")
+	}
+
+	return id
 }
