@@ -11,3 +11,8 @@ type Section struct {
 	Year          int    `json:"year" db:"year"`
 	RoomNumber    int    `json:"room_number" db:"room_number"`
 }
+
+type SimpleSection struct {
+	Id       string `db:"section_id"`
+	Timeslot int    `db:"timeslot_id"`
+}
