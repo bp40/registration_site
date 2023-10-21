@@ -17,16 +17,24 @@ func checkStudentCapacityOK(sectionId string) bool {
 	var currentStudents int
 	var maxStudents int
 
-	stmt, err := db.DB.Preparex(`SELECT COUNT(*) FROM registrations WHERE section_id=? AND status=?`)
-	err = stmt.Select(currentStudents, sectionId, "ENROLLED")
+	err := db.DB.QueryRow(`SELECT COUNT(*) FROM registrations WHERE section_id=? AND status=?`, sectionId, "ENROLLED").Scan(&currentStudents)
 
 	if err != nil {
-		log.Debug("failed to get enrolled courses")
+		log.Debug("select count failed")
 		return false
 	}
 
-	stmt, err = db.DB.Preparex(`SELECT max_students FROM sections WHERE section_id=?`)
-	err = stmt.Select(maxStudents, sectionId)
+	log.Info(currentStudents)
+
+	if err != nil {
+		log.Debug("failed to get enrolled courses")
+		log.Debug(err)
+		return false
+	}
+
+	err = db.DB.QueryRow(`SELECT max_students FROM sections WHERE section_id=?`, sectionId).Scan(&maxStudents)
+
+	log.Info(maxStudents)
 
 	if currentStudents < maxStudents {
 		log.Debug("curr std < max")
