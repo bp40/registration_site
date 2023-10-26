@@ -9,6 +9,25 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func getYearAndSemester(c *fiber.Ctx) (year int, semester int) {
+	year, _ = c.ParamsInt("year")
+	semester, _ = c.ParamsInt("semester")
+
+	if year == 0 {
+		year = time.Now().Year()
+	}
+
+	if semester != 1 && semester != 2 {
+		if time.Now().Month() >= 6 && time.Now().Month() <= 12 {
+			semester = 1
+		} else {
+			semester = 2
+		}
+	}
+
+	return year, semester
+}
+
 func GetSectionById(id int) (models.Section, error) {
 	var section models.Section
 	//stmt, err := db.DB.Preparex(`SELECT * FROM sections WHERE id=?`)
@@ -31,20 +50,7 @@ func GetSectionById(id int) (models.Section, error) {
 }
 
 func GetSectionsInYearSemester(c *fiber.Ctx) error {
-	year, _ := c.ParamsInt("year")
-	semester, _ := c.ParamsInt("semester")
-
-	if year == 0 {
-		year = time.Now().Year()
-	}
-
-	if semester != 1 && semester != 2 {
-		if time.Now().Month() >= 6 && time.Now().Month() <= 12 {
-			semester = 1
-		} else {
-			semester = 2
-		}
-	}
+	year, semester := getYearAndSemester(c)
 
 	var sections []models.Section
 	stmt, err := db.DB.Preparex(`SELECT * FROM sections WHERE year=? and semester=?`)
@@ -80,6 +86,27 @@ func GetSectionsByCourseCode(c *fiber.Ctx) error {
 
 	if err != nil {
 		return fiber.ErrInternalServerError
+	}
+
+	return c.JSON(sections)
+}
+
+func GetAllWebSections(c *fiber.Ctx) error {
+	year, semester := getYearAndSemester(c)
+
+	var sections []models.WebSection
+	stmt, err := db.DB.Preparex(`SELECT sections.section_id, timeslot_id, section_number, semester, room_number, max_students, year, instructors.first_name, instructors.last_name, courses.course_code, course_name, credits,
+       (SELECT COUNT(*) FROM registrations WHERE registrations.section_id = sections.section_id) AS current_enrolled
+FROM sections 
+INNER JOIN instructors ON sections.instructor_id = instructors.instructor_id 
+INNER JOIN courses ON sections.course_code = courses.course_code 
+WHERE year=? AND semester=?`)
+	log.Debug(err)
+	err = stmt.Select(&sections, year, semester)
+
+	if err != nil {
+		log.Debug(err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "msg": "cannot get web sections"})
 	}
 
 	return c.JSON(sections)

@@ -18,7 +18,7 @@ func SetupRoutes(app fiber.Router) {
 	// API
 	api := app.Group("/api")
 	api.Use(middleware.Protected())
-	api.Get("/sections/:semester/:year", services.GetSectionsInYearSemester)
+	api.Get("/sections/:semester/:year", services.GetAllWebSections)
 	api.Get("/sections/:name", services.GetSectionsByCourseName)
 	api.Get("/sections/:courseCode", services.GetSectionsByCourseCode)
 
