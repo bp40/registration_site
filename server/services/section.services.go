@@ -112,6 +112,22 @@ WHERE year=? AND semester=?`)
 	return c.JSON(sections)
 }
 
+func GetStudentsInSectionId(c *fiber.Ctx) error {
+
+	sectionId := c.Params("sectionId")
+
+	var students []models.Student
+	stmt, err := db.DB.Preparex(`SELECT * FROM students INNER JOIN registrations r on students.student_id = r.student_id WHERE r.student_id = students.student_id AND r.section_id=?`)
+	err = stmt.Select(&students, sectionId)
+
+	if err != nil {
+		log.Error(err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "msg": "cannot get students in section"})
+	}
+
+	return c.JSON(students)
+}
+
 func GetSectionsByDepartment(c *fiber.Ctx) error {
 	return fiber.ErrNotImplemented
 }

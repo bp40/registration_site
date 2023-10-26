@@ -15,12 +15,13 @@ func SetupRoutes(app fiber.Router) {
 	auth := app.Group("/auth")
 	auth.Post("/login", services.Login)
 
-	// API
-	api := app.Group("/api")
-	api.Use(middleware.Protected())
-	api.Get("/sections/:semester/:year", services.GetAllWebSections)
-	api.Get("/sections/:name", services.GetSectionsByCourseName)
-	api.Get("/sections/:courseCode", services.GetSectionsByCourseCode)
+	// SECTIONS
+	sections := app.Group("/sections")
+	sections.Use(middleware.Protected())
+	sections.Get("/:semester/:year", services.GetAllWebSections)
+	sections.Get("/:name", services.GetSectionsByCourseName)
+	sections.Get("/:courseCode", services.GetSectionsByCourseCode)
+	sections.Get("/:sectionId", middleware.VerifyStaff(), services.GetStudentsInSectionId)
 
 	// STUDENTS
 	student := app.Group("/student")
