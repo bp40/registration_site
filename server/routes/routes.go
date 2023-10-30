@@ -9,7 +9,7 @@ import (
 func SetupRoutes(app fiber.Router) {
 
 	// HOME
-	app.Static("/", "../client/registration_site/dist")
+	app.Static("/", "../client/registration-site/dist")
 
 	// AUTH
 	auth := app.Group("/auth")

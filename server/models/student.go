@@ -15,5 +15,6 @@ type Student struct {
 
 type AuthStudent struct {
 	StudentId int    `json:"StudentId" db:"student_id"`
+	FirstName string `json:"first_name" db:"first_name"`
 	Password  string `json:"password" db:"password"`
 }
