@@ -18,10 +18,11 @@ func SetupRoutes(app fiber.Router) {
 	// SECTIONS
 	sections := app.Group("/sections")
 	sections.Use(middleware.Protected())
+
 	sections.Get("/:semester/:year", services.GetAllWebSections)
-	sections.Get("/:name", services.GetSectionsByCourseName)
-	sections.Get("/:courseCode", services.GetSectionsByCourseCode)
-	sections.Get("/:sectionId", middleware.VerifyStaff(), services.GetStudentsInSectionId)
+	sections.Get("/name", services.GetSectionsByCourseName)
+	sections.Get("/courseCode", services.GetSectionsByCourseCode)
+	sections.Get("/sectionId", middleware.VerifyStaff(), services.GetStudentsInSectionId)
 
 	// STUDENTS
 	student := app.Group("/student")

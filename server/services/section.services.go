@@ -64,13 +64,20 @@ func GetSectionsInYearSemester(c *fiber.Ctx) error {
 }
 
 func GetSectionsByCourseName(c *fiber.Ctx) error {
-	name := c.Params("course_name")
+	name := "%" + c.Query("course_name") + "%"
 
-	var sections []models.Section
-	stmt, err := db.DB.Preparex(`SELECT * FROM sections WHERE name = ?`)
-	err = stmt.Select(&sections, name)
+	log.Info(name)
+	var sections []models.SectionWithName
 
+	stmt, err := db.DB.Preparex(`SELECT sections.*, course_name FROM sections INNER JOIN courses ON sections.course_code = courses.course_code WHERE course_name LIKE ?`)
 	if err != nil {
+		log.Error(err)
+		return fiber.ErrInternalServerError
+	}
+
+	err = stmt.Select(&sections, name)
+	if err != nil {
+		log.Error(err)
 		return fiber.ErrInternalServerError
 	}
 
@@ -78,13 +85,18 @@ func GetSectionsByCourseName(c *fiber.Ctx) error {
 }
 
 func GetSectionsByCourseCode(c *fiber.Ctx) error {
-	courseCode := c.Params("course_code")
+	courseCode := "%" + c.Query("course_code") + "%"
 
-	var sections []models.Section
-	stmt, err := db.DB.Preparex(`SELECT * FROM sections WHERE course_code = ?`)
-	err = stmt.Select(&sections, courseCode)
-
+	var sections []models.SectionWithName
+	stmt, err := db.DB.Preparex(`SELECT sections.*, course_name FROM sections INNER JOIN courses ON sections.course_code = courses.course_code WHERE sections.course_code LIKE ?`)
 	if err != nil {
+		log.Error(err)
+		return fiber.ErrInternalServerError
+	}
+
+	err = stmt.Select(&sections, courseCode)
+	if err != nil {
+		log.Error(err)
 		return fiber.ErrInternalServerError
 	}
 
