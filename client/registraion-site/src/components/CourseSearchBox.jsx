@@ -20,34 +20,61 @@ const CourseSearchBox = () => {
         setQueryType('code')
     }
 
-    const handleReset = e => {
+    const reset = () => {
         setQueryType('')
         setCourseName('')
         setCourseCode('')
     }
 
+    const handleReset = e => {
+        reset()
+    }
+
     const handleSearchSubmit = e => {
 
         e.preventDefault()
-
-        const headers = { 'Authorization': sessionStorage.getItem('token') };
+        const jwtToken = sessionStorage.getItem('token')
 
         if (queryType === 'name'){
-            fetch(`http://localhost:3000/sections/data?course_name=${courseName}`, {
+            fetch(`http://localhost:3000/sections/name/?course_name=${courseName}`, {
                 method: 'GET',
                 mode: 'cors',
-                headers: headers
-            }).then(res => res.json()
-                .then(data => {
-                    console.log(data)
-            }))
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`, // Add the 'Bearer ' prefix for JWT
+                },
+            }).then(res => {
+                if(res.ok){
+                    res.json()
+                        .then(resJson => {
+                            console.log(resJson)
+                        })
+                } else {
+                    console.log(res)
+                    console.error("cannot fetch course by name")
+                }
+            })
 
         } else if (queryType === 'code') {
-            fetch(`http://localhost:3000/sections/data?course_code=${courseCode}`, {
+            fetch(`http://localhost:3000/sections/courseCode/?course_code=${courseCode}`, {
                 method: 'GET',
-                headers: headers
+                mode: 'cors',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`, // Add the 'Bearer ' prefix for JWT
+                },
+            }).then(res => {
+                if(res.ok){
+                    res.json()
+                        .then(resJson => {
+                            console.log(resJson)
+                        })
+                } else {
+                    console.log(res)
+                    console.error("cannot fetch course by code")
+                }
             })
         }
+
+        reset()
 
     }
 
