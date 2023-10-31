@@ -8,7 +8,7 @@ const PrivateRoutes = () => {
     auth = token !== null && token !== undefined;
 
     return (
-        auth ? <Outlet/> : <Navigate to='/'/>
+        auth ? <Outlet/> : <Navigate to='/' state={{ isRedirected: true}}/>
     )
 }
 

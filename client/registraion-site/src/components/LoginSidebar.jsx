@@ -2,16 +2,19 @@ import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Modal} from "./modal.jsx";
 import { atom, useSetAtom } from "jotai";
+import { useLocation } from 'react-router-dom';
 
 export const nameAtom = atom('')
 
 const LoginSidebar = () => {
 
+    const location = useLocation();
     const navigate = useNavigate()
 
     const setName = useSetAtom(nameAtom)
     const [id, setId] = useState("")
     const [pass, setPass] = useState("")
+    const isRedirected = location.state?.isRedirected;
 
     const handleLoginSubmit = (e) => {
         e.preventDefault()
@@ -58,6 +61,12 @@ const LoginSidebar = () => {
                     <button type="submit" className="btn btn-active btn-primary">Login</button>
                 </div>
             </form>
+            {
+                isRedirected ? <div className="alert alert-error m-4 w-56">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>please login first.</span>
+                </div>
+                : <></>}
         </div>
     )
 }
