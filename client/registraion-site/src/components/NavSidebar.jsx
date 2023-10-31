@@ -1,7 +1,15 @@
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import Search from "../routes/search.jsx";
 
 export const NavSidebar = () => {
+
+    const navigate = useNavigate()
+
+    const handleLogout = () => {
+        sessionStorage.clear();
+        navigate("/")
+    }
+
     return (
         <div className="flex flex-col content-start align-top bg-purple-950 h-screen py-4">
             <h2 className="px-4 text-white text-3xl">SimpleReg</h2>
@@ -25,6 +33,7 @@ export const NavSidebar = () => {
                     </Link>
                 </li>
             </ul>
+            <button className='mt-auto btn bn-secondary' onClick={handleLogout}> Logout </button>
         </div>
     )
 }
