@@ -67,9 +67,15 @@ func GetSectionsByCourseName(c *fiber.Ctx) error {
 	name := "%" + c.Query("course_name") + "%"
 
 	log.Info(name)
-	var sections []models.SectionWithName
+	var sections []models.SectionWebResult
 
-	stmt, err := db.DB.Preparex(`SELECT sections.*, course_name FROM sections INNER JOIN courses ON sections.course_code = courses.course_code WHERE course_name LIKE ?`)
+	stmt, err := db.DB.Preparex(`SELECT sections.*, courses.course_name, COUNT(*) AS current_students
+FROM sections
+INNER JOIN courses ON sections.course_code = courses.course_code
+LEFT JOIN registrations ON sections.section_id = registrations.section_id AND registrations.status = 'ENROLLED'
+WHERE courses.course_name LIKE ?
+GROUP BY sections.section_id, courses.course_name;
+`)
 	if err != nil {
 		log.Error(err)
 		return fiber.ErrInternalServerError
@@ -87,8 +93,14 @@ func GetSectionsByCourseName(c *fiber.Ctx) error {
 func GetSectionsByCourseCode(c *fiber.Ctx) error {
 	courseCode := "%" + c.Query("course_code") + "%"
 
-	var sections []models.SectionWithName
-	stmt, err := db.DB.Preparex(`SELECT sections.*, course_name FROM sections INNER JOIN courses ON sections.course_code = courses.course_code WHERE sections.course_code LIKE ?`)
+	var sections []models.SectionWebResult
+	stmt, err := db.DB.Preparex(`SELECT sections.*, courses.course_name, COUNT(*) AS current_students
+FROM sections
+INNER JOIN courses ON sections.course_code = courses.course_code
+LEFT JOIN registrations ON sections.section_id = registrations.section_id AND registrations.status = 'ENROLLED'
+WHERE courses.course_code LIKE ?
+GROUP BY sections.section_id, courses.course_name;
+`)
 	if err != nil {
 		log.Error(err)
 		return fiber.ErrInternalServerError

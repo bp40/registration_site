@@ -12,9 +12,10 @@ type Section struct {
 	RoomNumber    int    `json:"room_number" db:"room_number"`
 }
 
-type SectionWithName struct {
+type SectionWebResult struct {
 	Section
-	CourseName string `json:"course_name" db:"course_name"`
+	CourseName      string `json:"course_name" db:"course_name"`
+	CurrentStudents string `json:"current_students" db:"current_students"`
 }
 
 type WebSection struct {
