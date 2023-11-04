@@ -100,12 +100,14 @@ func RegisterCourses(c *fiber.Ctx) error {
 		AllSectionsCSV string `json:"all_sections_csv" form:"all_sections_csv"`
 	}
 
+	log.Info("1 Got reg request")
 	req := new(registerRequest)
 	if err := c.BodyParser(req); err != nil {
-		return fiber.ErrBadRequest
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error parsing section", "error": err.Error()})
 	}
+	log.Info("2 Parsed req")
 	sectionStrings := strings.Split(req.AllSectionsCSV, ",")
-
+	log.Debug(sectionStrings)
 	var sectionIds []int
 
 	for _, secId := range sectionStrings {
@@ -117,6 +119,7 @@ func RegisterCourses(c *fiber.Ctx) error {
 		}
 		sectionIds = append(sectionIds, id)
 	}
+	log.Info("parsed string")
 
 	err := checkAvailability(sectionIds, req.StudentId)
 	if err != nil {
@@ -134,9 +137,14 @@ func RegisterCourses(c *fiber.Ctx) error {
 		query := "INSERT INTO registrations (student_id, section_id, status, grade, registration_time) VALUES (?,?,?,?,?)"
 		datetime := time.Now().Format(time.RFC3339)
 		tx := db.DB.MustBegin()
-		db.DB.MustExec(query, req.StudentId, section.Id, "ENROLLED", nil, datetime)
+		_, err = db.DB.Exec(query, req.StudentId, section.Id, "ENROLLED", nil, datetime)
+		if err != nil {
+			log.Error(err.Error())
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "Database Exec Failed"})
+		}
 		err = tx.Commit()
 		if err != nil {
+			log.Error(err.Error())
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "TX failed"})
 		}
 		log.Info("tx complete")

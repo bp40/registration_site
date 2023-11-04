@@ -1,10 +1,14 @@
 import { sectionsAtom } from "../routes/search.jsx";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
+import { calculateDayColor } from "../utils/utils.js";
 
 const SearchResult = () => {
   const results = useAtomValue(sectionsAtom);
-  const [courseCart, setCourseCart] = useState([]);
+  const [courseCart, setCourseCart] = useState(() => {
+    const storedCart = JSON.parse(sessionStorage.getItem("courseCart"));
+    return storedCart || [];
+  });
   const timeslotsText = [
     "MONDAY AM",
     "MONDAY PM",
@@ -27,28 +31,6 @@ const SearchResult = () => {
       timeslot: timeslotsText[item.timeslot_id],
     }));
   }
-
-  const calculateDayColor = (day) => {
-    switch (day) {
-      case "MONDAY AM":
-      case "MONDAY PM":
-        return "badge badge-warning gap-2";
-      case "TUESDAY AM":
-      case "TUESDAY PM":
-        return "badge badge-secondary gap-2";
-      case "WEDNESDAY AM":
-      case "WEDNESDAY PM":
-        return "badge badge-accent gap-2";
-      case "THURSDAY AM":
-      case "THURSDAY PM":
-        return "badge badge-warning badge-outline gap-2";
-      case "FRIDAY AM":
-      case "FRIDAY PM":
-        return "badge badge-info gap-2";
-      default:
-        return "";
-    }
-  };
 
   const handleAddCourse = (course) => {
     setCourseCart((current) => [...current, course]);
@@ -82,9 +64,9 @@ const SearchResult = () => {
                   <td>
                     {item.current_students < item.max_students ? (
                       <div className="badge badge-success gap-2">Available</div>
-                    ) : item.current_students === item.max_students ? (
+                    ) : item.current_students + 5 >= item.max_students ? (
                       <div className="badge badge-warning gap-2">
-                        Almost Full
+                        Near Capacity
                       </div>
                     ) : (
                       <div className="badge badge-error gap-2">Full</div>
