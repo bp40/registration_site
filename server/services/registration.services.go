@@ -134,6 +134,8 @@ func RegisterCourses(c *fiber.Ctx) error {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail getting section id"})
 		}
 		log.Info("id found")
+		log.Debug(id)
+		log.Debug(req.StudentId)
 		query := "INSERT INTO registrations (student_id, section_id, status, grade, registration_time) VALUES (?,?,?,?,?)"
 		datetime := time.Now().Format(time.RFC3339)
 		tx := db.DB.MustBegin()

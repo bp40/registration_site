@@ -10,7 +10,7 @@ const Search = () => {
     return (
         <div className='flex p-0 w-screen'>
             <NavSidebar/>
-            <div className='flex justify-center flex-wrap w-full my-4'>
+            <div className='flex justify-center flex-wrap w-full my-4 flex-col content-center'>
                 <CourseSearchBox/>
                 <SearchResult/>
             </div>

@@ -87,7 +87,7 @@ const CourseSearchBox = () => {
         <>
             <div className='card rounded w-2/3 bg-base-100 shadow-xl flex justify-center'>
                 <form method="post" onSubmit={handleLoginSubmit}>
-                    <div className="flex w-full px-4 py-8 items-center">
+                    <div className="flex w-full px-4 py-8 items-center justify-center">
                         <div className="inline p-4">
                             <label className="label">
                                 <span className="label-text  text-xl">Course Name</span>
@@ -109,7 +109,7 @@ const CourseSearchBox = () => {
                         </div>
 
                         <button type="submit" onClick={handleSearchSubmit} className="btn-sm btn-active btn-primary m-4">Search</button>
-                        <button type="reset" onClick={handleReset} className="btn-sm btn-active btn-info m-4">Reset</button>
+                        <button type="reset" onClick={handleReset} className="btn-sm btn-active btn-info m-4">Reset Search</button>
                     </div>
                 </form>
             </div>

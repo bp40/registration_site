@@ -44,6 +44,10 @@ const LoginSidebar = () => {
     });
   };
 
+  const handleStaffLogin = () =>{
+    navigate("staff")
+  }
+
   return (
     <div className="flex flex-col content-start align-top bg-purple-950 h-screen w-1/5 py-4">
       <Modal />
@@ -96,6 +100,9 @@ const LoginSidebar = () => {
       ) : (
         <></>
       )}
+      <div>
+        <button className="btn btn-primary w-full mt-auto" onClick={handleStaffLogin}>Staff Login</button>
+      </div>
     </div>
   );
 };
