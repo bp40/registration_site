@@ -15,7 +15,35 @@ func hashPassword(password string) (string, error) {
 }
 
 func GetStudentsById(c *fiber.Ctx) error {
-	return fiber.ErrNotImplemented
+	var student []models.WebStudent
+
+	stmt, err := db.DB.Preparex("SELECT student_id, first_name, last_name, date_of_birth, sex, enroll_year, level FROM students WHERE student_id=?")
+	if err != nil {
+		log.Error(err)
+		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "cannot fetch student with id"})
+	}
+
+	err = stmt.Select(&student)
+	if err != nil {
+		log.Error(err)
+	}
+
+	return c.JSON(student)
+}
+
+func GetAllStudents(c *fiber.Ctx) error {
+
+	var students []models.WebStudent
+	stmt, err := db.DB.Preparex("SELECT student_id, first_name, last_name, date_of_birth, sex, enroll_year, level FROM students")
+
+	err = stmt.Select(&students)
+
+	if err != nil {
+		log.Error(err)
+		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "error", "message": "cannot fetch students"})
+	}
+
+	return c.JSON(students)
 }
 
 func CreateStudent(c *fiber.Ctx) error {
