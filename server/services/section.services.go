@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/jmoiron/sqlx"
 	"strconv"
@@ -155,32 +156,40 @@ func GetStudentsInSectionId(c *fiber.Ctx) error {
 }
 
 func GetStudentCurrentSectionsInfo(c *fiber.Ctx) error {
-
 	studentId, _ := c.ParamsInt("id")
+	log.Info(studentId)
 	sectionsList, err := StudentEnrolledSectionsId(studentId)
-
 	if err != nil {
+		log.Error("error fetching student sections")
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "msg": "cannot get sections for student"})
 	}
-
 	var sectionIds []int
 	for _, section := range sectionsList {
 		id, _ := strconv.Atoi(section.Id)
 		sectionIds = append(sectionIds, id)
 	}
-
 	var sections []models.WebSection
 	query, args, err := sqlx.In("SELECT sections.section_id, timeslot_id, section_number, semester, room_number, max_students, year, instructors.first_name, instructors.last_name, courses.course_code, course_name, credits, (SELECT COUNT(*) FROM registrations WHERE registrations.section_id = sections.section_id) AS current_enrolled FROM sections INNER JOIN instructors ON sections.instructor_id = instructors.instructor_id INNER JOIN courses ON sections.course_code = courses.course_code WHERE section_id IN (?);", sectionIds)
+	if err != nil {
+		log.Error("fail to generate query")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "msg": "cannot query section ids"})
+	}
 	query = db.DB.Rebind(query)
 	rows, err := db.DB.Queryx(query, args...)
-
 	if err != nil {
+		log.Error("failed to query for student sections")
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "msg": "cannot get fetch sections"})
 	}
-
+	log.Debug("begin")
 	for rows.Next() {
-		err = rows.StructScan(sections)
+		log.Debug("ok1")
+		err = rows.StructScan(&sections)
+		if err != nil {
+			log.Error("struct scan failed for sections: ", err)
+		}
+		log.Debug("ok2")
 	}
-
+	log.Debug("end")
+	fmt.Printf("%+v\n", sections)
 	return c.JSON(sections)
 }

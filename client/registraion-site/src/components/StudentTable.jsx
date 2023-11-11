@@ -11,8 +11,9 @@ export const StudentTable = () => {
     found = true;
   }
 
-  const handleInspectStudent = () => {
-    navigate("info");
+  const handleInspectStudent = (event, id) => {
+    console.log("click!");
+    navigate("inspect", { state: { id: id } });
   };
 
   useEffect(() => {
@@ -69,7 +70,9 @@ export const StudentTable = () => {
                   <td> {student.enroll_year} </td>
                   <td>
                     <button
-                      onClick={handleInspectStudent}
+                      onClick={(event) =>
+                        handleInspectStudent(event, student.StudentId)
+                      }
                       className="btn btn-primary btn-xs"
                     >
                       Inspect
