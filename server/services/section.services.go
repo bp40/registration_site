@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/jmoiron/sqlx"
 	"strconv"
@@ -175,21 +174,12 @@ func GetStudentCurrentSectionsInfo(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "msg": "cannot query section ids"})
 	}
 	query = db.DB.Rebind(query)
-	rows, err := db.DB.Queryx(query, args...)
+
+	err = db.DB.Select(&sections, query, args...)
 	if err != nil {
-		log.Error("failed to query for student sections")
+		log.Fatal("failed to query for student sections")
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "msg": "cannot get fetch sections"})
 	}
-	log.Debug("begin")
-	for rows.Next() {
-		log.Debug("ok1")
-		err = rows.StructScan(&sections)
-		if err != nil {
-			log.Error("struct scan failed for sections: ", err)
-		}
-		log.Debug("ok2")
-	}
-	log.Debug("end")
-	fmt.Printf("%+v\n", sections)
+
 	return c.JSON(sections)
 }
