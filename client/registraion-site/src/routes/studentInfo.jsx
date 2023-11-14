@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { EnrollmentTable } from "../components/EnrollmentTable.jsx";
+import { LoadingSpinner } from "../components/LoadingSpinner.jsx";
 
 export const StudentInfo = () => {
   const jwtToken = sessionStorage.getItem("token");
   const [results, setResults] = useState([]);
   const { state } = useLocation();
-  const { id } = state;
+  const { id, fname, lname } = state;
 
   useEffect(() => {
     fetch(`http://localhost:3000/student/search/${id}`, {
@@ -27,5 +29,16 @@ export const StudentInfo = () => {
     });
   }, []);
 
-  return <></>;
+  return (
+    <>
+      <h1>
+        Showing {fname} {lname}'s enrollments
+      </h1>
+      {results == null || false ? (
+        <LoadingSpinner />
+      ) : (
+        <EnrollmentTable courses={results} />
+      )}
+    </>
+  );
 };
