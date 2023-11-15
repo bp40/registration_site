@@ -176,7 +176,7 @@ func GetStudentCurrentSectionsInfo(c *fiber.Ctx) error {
 	}
 
 	var sections []enrolledSections
-	query, args, err := sqlx.In("SELECT sections.section_id, timeslot_id, section_number, semester, room_number, max_students, year, instructors.first_name, instructors.last_name, courses.course_code, course_name, credits, status, grade, (SELECT COUNT(*) FROM registrations WHERE registrations.section_id = sections.section_id) AS current_enrolled FROM sections INNER JOIN instructors ON sections.instructor_id = instructors.instructor_id INNER JOIN courses ON sections.course_code = courses.course_code INNER JOIN registrations ON registrations.section_id = sections.section_id WHERE sections.section_id IN (?);", sectionIds)
+	query, args, err := sqlx.In("SELECT sections.section_id, timeslot_id, section_number, semester, room_number, max_students, year, instructors.first_name, instructors.last_name, courses.course_code, course_name, credits, status, grade, (SELECT COUNT(*) FROM registrations WHERE registrations.section_id = sections.section_id) AS current_enrolled FROM sections INNER JOIN instructors ON sections.instructor_id = instructors.instructor_id INNER JOIN courses ON sections.course_code = courses.course_code INNER JOIN registrations ON registrations.section_id = sections.section_id WHERE sections.section_id IN (?) AND student_id=?;", sectionIds, studentId)
 	if err != nil {
 		log.Error("fail to generate query ", err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "msg": "cannot query section ids"})
