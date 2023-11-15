@@ -49,6 +49,7 @@ export const StudentTable = () => {
             <th>Date of Birth</th>
             <th>Enrollment year</th>
             <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -82,6 +83,9 @@ export const StudentTable = () => {
                     >
                       Inspect
                     </button>
+                  </td>
+                  <td>
+                    <button className=' btn btn-xs btn-secondary'>Edit</button>
                   </td>
                 </tr>
               ))}
