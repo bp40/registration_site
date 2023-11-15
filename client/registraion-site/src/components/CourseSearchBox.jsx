@@ -85,9 +85,9 @@ const CourseSearchBox = () => {
 
     return(
         <>
-            <div className='card rounded w-2/3 bg-base-100 shadow-xl flex justify-center'>
+            <div className='card rounded w-2/3 bg-base-100 shadow-xl flex justify-center max-[1100px]:flex-col'>
                 <form method="post" onSubmit={handleLoginSubmit}>
-                    <div className="flex w-full px-4 py-8 items-center justify-center">
+                    <div className="flex w-full px-4 py-8 items-center justify-center max-[1100px]:flex-col">
                         <div className="inline p-4">
                             <label className="label">
                                 <span className="label-text  text-xl">Course Name</span>

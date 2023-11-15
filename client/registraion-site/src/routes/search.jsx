@@ -8,9 +8,9 @@ export const sectionsAtom =  atom([])
 
 const Search = () => {
     return (
-        <div className='flex p-0 w-screen'>
+        <div className='flex p-0 w-screen h-screen max-[800px]:flex-wrap'>
             <NavSidebar/>
-            <div className='flex justify-center flex-wrap w-full my-4 flex-col content-center'>
+            <div className='flex justify-center flex-wrap w-screen my-4 md:flex-col content-center '>
                 <CourseSearchBox/>
                 <SearchResult/>
             </div>
