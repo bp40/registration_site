@@ -1,6 +1,7 @@
 package services
 
 import (
+	"database/sql"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/jmoiron/sqlx"
 	"strconv"
@@ -170,8 +171,8 @@ func GetStudentCurrentSectionsInfo(c *fiber.Ctx) error {
 
 	type enrolledSections struct {
 		models.WebSection
-		Status string  `json:"status"`
-		Grade  float32 `json:"grade"`
+		Status string          `json:"status"`
+		Grade  sql.NullFloat64 `json:"grade"`
 	}
 
 	var sections []enrolledSections
@@ -184,7 +185,7 @@ func GetStudentCurrentSectionsInfo(c *fiber.Ctx) error {
 
 	err = db.DB.Select(&sections, query, args...)
 	if err != nil {
-		log.Fatal("failed to query for student sections", err)
+		log.Error("failed to query for student sections", err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "msg": "cannot get fetch sections"})
 	}
 
