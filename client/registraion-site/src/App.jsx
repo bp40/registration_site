@@ -9,6 +9,7 @@ import Staff from "./routes/staff.jsx";
 import { StaffDashboard } from "./routes/staffdashboard.jsx";
 import { StudentInfo } from "./routes/studentInfo.jsx";
 import { EditStudent } from "./routes/edit_student.jsx";
+import { Add_student } from "./routes/add_student.jsx";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           element={<EditStudent />}
           exact
         />
+        <Route path={"/staff/new_student"} element={<Add_student />} exact />
       </Route>
     </Routes>
   );

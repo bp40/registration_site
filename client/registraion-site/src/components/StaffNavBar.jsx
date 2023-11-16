@@ -1,5 +1,4 @@
 import { Link, useNavigate } from "react-router-dom";
-import Search from "../routes/search.jsx";
 
 export const StaffNavBar = () => {
   const navigate = useNavigate();
@@ -33,7 +32,7 @@ export const StaffNavBar = () => {
           </Link>
         </li>
         <li>
-          <Link to="/new_student">
+          <Link to="/staff/new_student">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"

@@ -3,6 +3,7 @@ export const TextInput = ({
   placeholder,
   onChange,
   value,
+  name,
   inputType = "text",
 }) => {
   return (
@@ -12,6 +13,7 @@ export const TextInput = ({
       </label>
       <input
         type={inputType}
+        name={name}
         placeholder={placeholder}
         className="input input-bordered w-full max-w-xs"
         value={value}
