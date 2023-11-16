@@ -12,7 +12,6 @@ export const StudentTable = () => {
   }
 
   const handleInspectStudent = (event, id, fname, lname) => {
-    console.log("click!");
     navigate("inspect", { state: { id: id, fname: fname, lname: lname } });
   };
 
@@ -31,10 +30,8 @@ export const StudentTable = () => {
       if (res.ok) {
         res.json().then((resJson) => {
           setResults(resJson);
-          console.log(resJson);
         });
       } else {
-        console.log(res);
         console.error("cannot fetch student list");
       }
     });

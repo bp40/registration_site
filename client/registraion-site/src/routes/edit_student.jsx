@@ -1,7 +1,7 @@
 import { StaffNavBar } from "../components/StaffNavBar.jsx";
 import { useLocation } from "react-router-dom";
 import { TextInput } from "../components/textInput.jsx";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Warning } from "../components/Warning.jsx";
 
 export const EditStudent = () => {
@@ -51,6 +51,45 @@ export const EditStudent = () => {
     setChanged(true);
   };
 
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+
+    const data = {
+      StudentId: student.StudentId,
+      first_name: firstName,
+      last_name: lastName,
+      date_of_birth: dob,
+      sex: sex,
+      RawPassword: password,
+      enroll_year: enrollYear,
+      level: level,
+    };
+
+    const jwtToken = sessionStorage.getItem("token");
+
+    fetch(`http://localhost:3000/student/edit`, {
+      method: "PATCH",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      if (res.status === 200) {
+        console.log("ok!");
+        res.json().then((json) => {
+          console.log(json);
+        });
+      } else {
+        console.log(res.status);
+        res.json().then((json) => {
+          console.log(json);
+        });
+      }
+    });
+  };
+
   return (
     <div className="flex p-0 w-screen">
       <StaffNavBar />
@@ -58,52 +97,69 @@ export const EditStudent = () => {
         <h1 className="text-xl">
           Editing {student.first_name} {student.last_name}'s information
         </h1>
-        {changed ? <Warning text="Unsaved changes detected!" /> : null}
-        <div className="flex flex-row flex-wrap space-between gap-4">
-          <div className="form-control w-full max-w-xs">
-            <label className="label">
-              <span className="label-text">ID</span>
-            </label>
-            <input
-              type="text"
-              placeholder={student.StudentId}
-              className="input input-bordered w-full max-w-xs"
-              disabled
+        {changed ? (
+          <Warning text="Unsaved changes detected! Go back to cancel" />
+        ) : null}
+        <div>
+          <form className="flex flex-row flex-wrap space-between gap-4">
+            <div className="form-control w-full max-w-xs">
+              <label className="label">
+                <span className="label-text">ID</span>
+              </label>
+              <input
+                type="text"
+                placeholder={student.StudentId}
+                className="input input-bordered w-full max-w-xs"
+                disabled
+              />
+            </div>
+            <TextInput
+              labelText="First name"
+              value={firstName}
+              onChange={handleFnameChange}
             />
-          </div>
-          <TextInput
-            labelText="First name"
-            value={firstName}
-            onChange={handleFnameChange}
-          />
-          <TextInput
-            labelText="Last name"
-            value={lastName}
-            onChange={handleLnameChange}
-          />
-          <TextInput
-            labelText="Date of birth"
-            value={dob}
-            onChange={handleDOBchange}
-          />
-          <TextInput labelText="Sex" value={sex} onChange={handleSexChange} />
-          <TextInput
-            labelText="Enrollment year"
-            value={enrollYear}
-            onChange={handleEnrollYearChange}
-          />
-          <TextInput
-            labelText="Level"
-            value={level}
-            onChange={handleLevelChange}
-          />
-          <TextInput
-            labelText="Password"
-            value={password}
-            placeholder="Type new password"
-            inputType="password"
-            onChange={handlePasswordChange}
-          />
+            <TextInput
+              labelText="Last name"
+              value={lastName}
+              onChange={handleLnameChange}
+            />
+            <TextInput
+              labelText="Date of birth"
+              value={dob}
+              onChange={handleDOBchange}
+            />
+            <TextInput labelText="Sex" value={sex} onChange={handleSexChange} />
+            <TextInput
+              labelText="Enrollment year"
+              value={enrollYear}
+              onChange={handleEnrollYearChange}
+            />
+            <TextInput
+              labelText="Level"
+              value={level}
+              onChange={handleLevelChange}
+            />
+            <TextInput
+              labelText="Password"
+              value={password}
+              placeholder="Type new password"
+              inputType="password"
+              onChange={handlePasswordChange}
+            />
+            {changed ? (
+              <button
+                type="submit"
+                className="btn btn-primary"
+                onClick={handleEditSubmit}
+              >
+                Save Changes
+              </button>
+            ) : (
+              <button type="submit" className="btn btn-primary" disabled>
+                Save Changes
+              </button>
+            )}
+          </form>
         </div>
       </div>
     </div>

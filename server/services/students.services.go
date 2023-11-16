@@ -79,7 +79,36 @@ func CreateStudent(c *fiber.Ctx) error {
 }
 
 func UpdateStudent(c *fiber.Ctx) error {
-	return fiber.ErrNotImplemented
+
+	type updateInfo struct {
+		StudentId   int    `json:"StudentId" db:"student_id"`
+		FirstName   string `json:"first_name" db:"first_name"`
+		LastName    string `json:"last_name" db:"last_name"`
+		Sex         string `json:"sex" db:"sex"`
+		DateOfBirth string `json:"date_of_birth" db:"date_of_birth"`
+		EnrollYear  int    `json:"enroll_year" db:"enroll_year"`
+		Level       string `json:"level" db:"level"`
+		Password    string `json:"RawPassword"`
+	}
+
+	input := new(updateInfo)
+
+	if err := c.BodyParser(input); err != nil {
+		log.Error("cannot parse updateInfo")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "failed", "message": "failed to retrieve student id"})
+	}
+
+	input.Password, _ = hashPassword(input.Password)
+
+	result, err := db.DB.NamedExec(`UPDATE students SET first_name=:first_name, last_name=:last_name, sex=:sex, date_of_birth=:date_of_birth, enroll_year=:enroll_year, level=:level, password=:password WHERE student_id=:student_id`, input)
+	log.Info(result)
+
+	if err != nil {
+		log.Error(err)
+		return c.Status(fiber.StatusNotModified).JSON(fiber.Map{"status": "not modified", "message": "failed to update student info"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "updated"})
 }
 
 func DeleteStudent(c *fiber.Ctx) error {
