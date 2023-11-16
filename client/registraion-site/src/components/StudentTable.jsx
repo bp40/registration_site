@@ -16,6 +16,10 @@ export const StudentTable = () => {
     navigate("inspect", { state: { id: id, fname: fname, lname: lname } });
   };
 
+  const handleEditStudent = (event, student) => {
+    navigate("edit_student", { state: { student: student } });
+  };
+
   useEffect(() => {
     fetch(`http://localhost:3000/student/all`, {
       method: "GET",
@@ -81,11 +85,18 @@ export const StudentTable = () => {
                       }
                       className="btn btn-primary btn-xs"
                     >
-                      Inspect
+                      Enrollments
                     </button>
                   </td>
                   <td>
-                    <button className=' btn btn-xs btn-secondary'>Edit</button>
+                    <button
+                      className=" btn btn-xs btn-secondary"
+                      onClick={(event) => {
+                        handleEditStudent(event, student);
+                      }}
+                    >
+                      Edit
+                    </button>
                   </td>
                 </tr>
               ))}

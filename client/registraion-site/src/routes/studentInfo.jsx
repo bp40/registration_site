@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { EnrollmentTable } from "../components/EnrollmentTable.jsx";
 import { LoadingSpinner } from "../components/LoadingSpinner.jsx";
+import { StaffNavBar } from "../components/StaffNavBar.jsx";
 
 export const StudentInfo = () => {
   const jwtToken = sessionStorage.getItem("token");
@@ -30,15 +31,18 @@ export const StudentInfo = () => {
   }, []);
 
   return (
-    <>
-      <h1>
-        Showing {fname} {lname}'s enrollments
-      </h1>
-      {results == null || false ? (
-        <LoadingSpinner />
-      ) : (
-        <EnrollmentTable courses={results} />
-      )}
-    </>
+    <div className="flex p-0 w-screen">
+      <StaffNavBar />
+      <div className="p-4">
+        <h1 className="text-xl">
+          Showing {fname} {lname}'s enrollments
+        </h1>
+        {results == null || false ? (
+          <LoadingSpinner />
+        ) : (
+          <EnrollmentTable courses={results} />
+        )}
+      </div>
+    </div>
   );
 };
