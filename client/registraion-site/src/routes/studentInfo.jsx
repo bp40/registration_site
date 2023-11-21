@@ -21,10 +21,8 @@ export const StudentInfo = () => {
       if (res.ok) {
         res.json().then((resJson) => {
           setResults(resJson);
-          console.log(resJson);
         });
       } else {
-        console.log(res);
         console.error("cannot fetch student from id");
       }
     });
