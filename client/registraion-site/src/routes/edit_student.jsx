@@ -8,64 +8,28 @@ export const EditStudent = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const { student } = state;
-
+  const [isLoading, setIsLoading] = useState(false);
   const [changed, setChanged] = useState(false);
-  const [firstName, setFirstName] = useState(student.first_name);
-  const [lastName, setLastName] = useState(student.last_name);
-  const [dob, setDob] = useState(student.date_of_birth.substring(0, 10));
-  const [sex, setSex] = useState(student.sex);
-  const [enrollYear, setEnrollYear] = useState(student.enroll_year);
-  const [level, setLevel] = useState(student.level);
-  const [password, setPassword] = useState(student.password);
+  const [inputFields, setInputFields] = useState({
+    StudentId: student.StudentId,
+    first_name: student.first_name,
+    last_name: student.last_name,
+    date_of_birth: student.date_of_birth.substring(0, 10),
+    sex: student.sex,
+    enroll_year: student.enroll_year,
+    password: student.password,
+    level: student.level,
+  });
 
-  const handleFnameChange = (event) => {
-    setFirstName(event.target.value);
+  const handleInputChange = (e) => {
     setChanged(true);
-  };
-
-  const handleLnameChange = (event) => {
-    setLastName(event.target.value);
-    setChanged(true);
-  };
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-    setChanged(true);
-  };
-
-  const handleLevelChange = (event) => {
-    setLevel(event.target.value);
-    setChanged(true);
-  };
-
-  const handleEnrollYearChange = (event) => {
-    setEnrollYear(event.target.value);
-    setChanged(true);
-  };
-
-  const handleSexChange = (event) => {
-    setSex(event.target.value);
-    setChanged(true);
-  };
-  const handleDOBchange = (event) => {
-    setDob(event.target.value);
-    setChanged(true);
+    setInputFields({ ...inputFields, [e.target.name]: e.target.value });
   };
 
   const handleEditSubmit = (e) => {
     e.preventDefault();
-
-    const data = {
-      StudentId: student.StudentId,
-      first_name: firstName,
-      last_name: lastName,
-      date_of_birth: dob,
-      sex: sex,
-      RawPassword: password,
-      enroll_year: enrollYear,
-      level: level,
-    };
-
+    setIsLoading(true);
+    console.log(inputFields);
     const jwtToken = sessionStorage.getItem("token");
 
     fetch(`http://localhost:3000/student/edit`, {
@@ -75,20 +39,15 @@ export const EditStudent = () => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwtToken}`,
       },
-      body: JSON.stringify(data),
-    }).then((res) => {
-      if (res.status === 200) {
-        console.log("ok!");
-        res.json().then((json) => {
-          navigate("/staff/dashboard");
-        });
-      } else {
+      body: JSON.stringify(inputFields),
+    })
+      .then((res) => {
         console.log(res.status);
-        res.json().then((json) => {
-          console.log(json);
-        });
-      }
-    });
+        navigate("/staff/dashboard");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   return (
@@ -116,36 +75,47 @@ export const EditStudent = () => {
             </div>
             <TextInput
               labelText="First name"
-              value={firstName}
-              onChange={handleFnameChange}
+              name="first_name"
+              value={inputFields.first_name}
+              onChange={handleInputChange}
             />
             <TextInput
               labelText="Last name"
-              value={lastName}
-              onChange={handleLnameChange}
+              name="last_name"
+              value={inputFields.last_name}
+              onChange={handleInputChange}
             />
             <TextInput
               labelText="Date of birth"
-              value={dob}
-              onChange={handleDOBchange}
+              name="date_of_birth"
+              value={inputFields.date_of_birth}
+              onChange={handleInputChange}
             />
-            <TextInput labelText="Sex" value={sex} onChange={handleSexChange} />
+            <TextInput
+              labelText="Sex"
+              name="sex"
+              value={inputFields.sex}
+              onChange={handleInputChange}
+            />
             <TextInput
               labelText="Enrollment year"
-              value={enrollYear}
-              onChange={handleEnrollYearChange}
+              name="enroll_year"
+              value={inputFields.enroll_year}
+              onChange={handleInputChange}
             />
             <TextInput
               labelText="Level"
-              value={level}
-              onChange={handleLevelChange}
+              name="level"
+              value={inputFields.level}
+              onChange={handleInputChange}
             />
             <TextInput
               labelText="Password"
-              value={password}
+              name="password"
+              value={inputFields.password}
               placeholder="Type new password"
               inputType="password"
-              onChange={handlePasswordChange}
+              onChange={handleInputChange}
             />
             {changed ? (
               <button
