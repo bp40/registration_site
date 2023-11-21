@@ -11,6 +11,7 @@ const LoginSidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const [modalMessage, setModalMessage] = useState("");
   const setName = useSetAtom(nameAtom);
   const setIDAtom = useSetAtom(idAtom);
   const [id, setId] = useState("");
@@ -39,18 +40,19 @@ const LoginSidebar = () => {
           navigate("profile");
         });
       } else {
+        setModalMessage("Incorrect Id / Password");
         document.getElementById("my_modal_1").showModal();
       }
     });
   };
 
-  const handleStaffLogin = () =>{
-    navigate("staff")
-  }
+  const handleStaffLogin = () => {
+    navigate("staff");
+  };
 
   return (
     <div className="flex flex-col content-start align-top bg-purple-950 h-screen w-1/5 py-4">
-      <Modal />
+      <Modal message={modalMessage} />
       <form method="post" onSubmit={handleLoginSubmit}>
         <h2 className="px-4 text-white text-3xl">SimpleReg</h2>
         <div className="form-control w-full max-w-xs px-4 py-8">
@@ -101,7 +103,12 @@ const LoginSidebar = () => {
         <></>
       )}
       <div>
-        <button className="btn btn-primary w-full mt-auto" onClick={handleStaffLogin}>Staff Login</button>
+        <button
+          className="btn btn-primary w-full mt-auto"
+          onClick={handleStaffLogin}
+        >
+          Staff Login
+        </button>
       </div>
     </div>
   );
