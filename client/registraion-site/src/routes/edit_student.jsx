@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { TextInput } from "../components/textInput.jsx";
 import { useState } from "react";
 import { Warning } from "../components/Warning.jsx";
+import { SelectBox } from "../components/SelectBox.jsx";
+import { LoadingSpinner } from "../components/LoadingSpinner.jsx";
 
 export const EditStudent = () => {
   const { state } = useLocation();
@@ -29,7 +31,7 @@ export const EditStudent = () => {
   const handleEditSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log(inputFields);
+
     const jwtToken = sessionStorage.getItem("token");
 
     fetch(`http://localhost:3000/student/edit`, {
@@ -91,11 +93,11 @@ export const EditStudent = () => {
               value={inputFields.date_of_birth}
               onChange={handleInputChange}
             />
-            <TextInput
+            <SelectBox
               labelText="Sex"
-              name="sex"
-              value={inputFields.sex}
-              onChange={handleInputChange}
+              placeholderText="Select sex"
+              options={["Male", "Female", "Other"]}
+              optionsValue={["0", "1", "2"]}
             />
             <TextInput
               labelText="Enrollment year"
@@ -103,10 +105,11 @@ export const EditStudent = () => {
               value={inputFields.enroll_year}
               onChange={handleInputChange}
             />
-            <TextInput
-              labelText="Level"
-              name="level"
-              value={inputFields.level}
+            <SelectBox
+              labelText="Study Level"
+              placeholderText="Select study level"
+              options={["Bachelor", "Master", "Doctoral"]}
+              optionsValue={["B", "M", "D"]}
               onChange={handleInputChange}
             />
             <TextInput
@@ -117,7 +120,9 @@ export const EditStudent = () => {
               inputType="password"
               onChange={handleInputChange}
             />
-            {changed ? (
+            {isLoading ? (
+              <LoadingSpinner />
+            ) : changed ? (
               <button
                 type="submit"
                 className="btn btn-primary"

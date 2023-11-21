@@ -1,8 +1,12 @@
 import { StaffNavBar } from "../components/StaffNavBar.jsx";
 import { TextInput } from "../components/textInput.jsx";
 import { useState } from "react";
+import { SelectBox } from "../components/SelectBox.jsx";
+import { Modal } from "../components/modal.jsx";
 
 export const Add_student = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const [inputFields, setInputFields] = useState({
     first_name: "",
     last_name: "",
@@ -19,10 +23,43 @@ export const Add_student = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    const jwtToken = sessionStorage.getItem("token");
+
+    fetch("http://localhost:3000/student/new", {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify(inputFields),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setIsLoading(false);
+        setModalMessage(
+          "Successfully created student " +
+            inputFields.first_name +
+            " with ID " +
+            data.student_id,
+        );
+        document.getElementById("my_modal_1").showModal();
+        setInputFields({
+          first_name: "",
+          last_name: "",
+          date_of_birth: "",
+          sex: "",
+          enroll_year: new Date().getFullYear(),
+          password: "",
+          level: "",
+        });
+      });
   };
 
   return (
     <div className="flex p-0 w-screen">
+      <Modal message={modalMessage} />
       <StaffNavBar />
       <div className="p-4">
         <div>
@@ -46,11 +83,11 @@ export const Add_student = () => {
               name="date_of_birth"
               onChange={handleInputChange}
             />
-            <TextInput
+            <SelectBox
               labelText="Sex"
-              value={inputFields.sex}
-              name="sex"
-              onChange={handleInputChange}
+              placeholderText="Select sex"
+              options={["Male", "Female", "Other"]}
+              optionsValue={["0", "1", "2"]}
             />
             <TextInput
               labelText="Enrollment year"
@@ -58,10 +95,11 @@ export const Add_student = () => {
               value={inputFields.enroll_year}
               onChange={handleInputChange}
             />
-            <TextInput
-              labelText="Level"
-              name="level"
-              value={inputFields.level}
+            <SelectBox
+              labelText="Study Level"
+              placeholderText="Select study level"
+              options={["Bachelor", "Master", "Doctoral"]}
+              optionsValue={["B", "M", "D"]}
               onChange={handleInputChange}
             />
             <TextInput

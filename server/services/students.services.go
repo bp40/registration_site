@@ -67,15 +67,17 @@ func CreateStudent(c *fiber.Ctx) error {
 	input.EnrollYear = time.Now().Year()
 	input.Password, _ = hashPassword(input.Password)
 
-	_, err := db.DB.NamedExec(`INSERT INTO students (
+	result, err := db.DB.NamedExec(`INSERT INTO students (
                       first_name, last_name, date_of_birth, sex, password, enroll_year, level)
 					VALUES (:first_name, :last_name, :date_of_birth, :sex, :password, :enroll_year, :level)`, &input)
+
+	studentId, err := result.LastInsertId()
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "failed", "message": "failed to create student"})
 	}
 
-	return nil
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"status": "success", "student_id": studentId})
 }
 
 func UpdateStudent(c *fiber.Ctx) error {

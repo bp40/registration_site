@@ -30,7 +30,7 @@ func SetupRoutes(app fiber.Router) {
 	student.Get("/:id<int>", middleware.VerifyStaff(), services.GetStudentsById)
 	student.Get("/search/:id<int>", middleware.VerifyStaff(), services.GetStudentCurrentSectionsInfo)
 	student.Get("/all", middleware.VerifyStaff(), services.GetAllStudents)
-	student.Post("/", middleware.VerifyStaff(), services.CreateStudent)
+	student.Post("/new", middleware.VerifyStaff(), services.CreateStudent)
 	student.Patch("/edit", middleware.VerifyStaff(), services.UpdateStudent)
 	student.Delete("/:id", middleware.VerifyStaff(), services.DeleteStudent)
 
