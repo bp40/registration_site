@@ -19,7 +19,7 @@ export const EditStudent = () => {
     date_of_birth: student.date_of_birth.substring(0, 10),
     sex: student.sex,
     enroll_year: student.enroll_year,
-    password: student.password,
+    RawPassword: "",
     level: student.level,
   });
 
@@ -30,6 +30,7 @@ export const EditStudent = () => {
 
   const handleEditSubmit = (e) => {
     e.preventDefault();
+    console.log(inputFields.RawPassword);
     setIsLoading(true);
 
     const jwtToken = sessionStorage.getItem("token");
@@ -98,6 +99,7 @@ export const EditStudent = () => {
               placeholderText="Select sex"
               options={["Male", "Female", "Other"]}
               optionsValue={["0", "1", "2"]}
+              defaultVal={inputFields.sex}
             />
             <TextInput
               labelText="Enrollment year"
@@ -110,12 +112,13 @@ export const EditStudent = () => {
               placeholderText="Select study level"
               options={["Bachelor", "Master", "Doctoral"]}
               optionsValue={["B", "M", "D"]}
+              defaultVal={inputFields.level}
               onChange={handleInputChange}
             />
             <TextInput
               labelText="Password"
-              name="password"
-              value={inputFields.password}
+              name="RawPassword"
+              value={inputFields.RawPassword}
               placeholder="Type new password"
               inputType="password"
               onChange={handleInputChange}

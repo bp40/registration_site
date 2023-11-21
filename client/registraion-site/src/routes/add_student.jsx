@@ -51,7 +51,7 @@ export const Add_student = () => {
           date_of_birth: "",
           sex: "",
           enroll_year: new Date().getFullYear(),
-          password: "",
+          RawPassword: "",
           level: "",
         });
       });
