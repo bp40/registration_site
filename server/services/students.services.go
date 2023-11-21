@@ -100,14 +100,19 @@ func UpdateStudent(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "failed", "message": "failed to retrieve student id"})
 	}
 
-	input.Password, _ = hashPassword(input.Password)
-
-	result, err := db.DB.NamedExec(`UPDATE students SET first_name=:first_name, last_name=:last_name, sex=:sex, date_of_birth=:date_of_birth, enroll_year=:enroll_year, level=:level, password=:password WHERE student_id=:student_id`, input)
-	log.Info(result)
-
-	if err != nil {
-		log.Error(err)
-		return c.Status(fiber.StatusNotModified).JSON(fiber.Map{"status": "not modified", "message": "failed to update student info"})
+	if input.Password != "" {
+		input.Password, _ = hashPassword(input.Password)
+		_, err := db.DB.NamedExec(`UPDATE students SET first_name=:first_name, last_name=:last_name, sex=:sex, date_of_birth=:date_of_birth, enroll_year=:enroll_year, level=:level, password=:password WHERE student_id=:student_id`, input)
+		if err != nil {
+			log.Error(err)
+			return c.Status(fiber.StatusNotModified).JSON(fiber.Map{"status": "not modified", "message": "failed to update student info"})
+		}
+	} else {
+		_, err := db.DB.NamedExec(`UPDATE students SET first_name=:first_name, last_name=:last_name, sex=:sex, date_of_birth=:date_of_birth, enroll_year=:enroll_year, level=:level WHERE student_id=:student_id`, input)
+		if err != nil {
+			log.Error(err)
+			return c.Status(fiber.StatusNotModified).JSON(fiber.Map{"status": "not modified", "message": "failed to update student info"})
+		}
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "updated"})
