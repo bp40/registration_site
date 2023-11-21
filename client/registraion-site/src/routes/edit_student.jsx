@@ -1,11 +1,12 @@
 import { StaffNavBar } from "../components/StaffNavBar.jsx";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { TextInput } from "../components/textInput.jsx";
 import { useState } from "react";
 import { Warning } from "../components/Warning.jsx";
 
 export const EditStudent = () => {
   const { state } = useLocation();
+  const navigate = useNavigate();
   const { student } = state;
 
   const [changed, setChanged] = useState(false);
@@ -79,7 +80,7 @@ export const EditStudent = () => {
       if (res.status === 200) {
         console.log("ok!");
         res.json().then((json) => {
-          console.log(json);
+          navigate("/staff/dashboard");
         });
       } else {
         console.log(res.status);
