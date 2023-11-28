@@ -1,29 +1,4 @@
-import {calculateDayColor} from "../utils/utils.js";
-
 export const EnrollmentTable = ({ courses }) => {
-
-  const timeslotsText = [
-    "MONDAY AM",
-    "MONDAY PM",
-    "TUESDAY AM",
-    "TUESDAY PM",
-    "WEDNESDAY AM",
-    "WEDNESDAY PM",
-    "THURSDAY AM",
-    "THURSDAY PM",
-    "FRIDAY AM",
-    "FRIDAY PM",
-  ];
-
-  let mappedResults = "";
-
-  if (courses !== null) {
-    mappedResults = courses.map((course) => ({
-      ...course,
-      timeslot: timeslotsText[course.timeslot_id],
-    }));
-  }
-
   return (
     <div className="overflow-x-auto">
       <table className="table">
@@ -40,7 +15,7 @@ export const EnrollmentTable = ({ courses }) => {
           </tr>
         </thead>
         <tbody>
-          {mappedResults.map((course) => (
+          {courses.map((course) => (
             <tr key={course.section_id}>
               <td> {course.section_id}</td>
               <td> {course.course_code}</td>
@@ -53,7 +28,7 @@ export const EnrollmentTable = ({ courses }) => {
                 {course.semester} / {course.year}
               </td>
               <td> {course.credits}</td>
-              <td className={calculateDayColor(course.timeslot)}> {course.timeslot}</td>
+              <td> {course.status}</td>
             </tr>
           ))}
         </tbody>

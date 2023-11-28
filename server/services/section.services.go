@@ -156,10 +156,7 @@ func GetStudentsInSectionId(c *fiber.Ctx) error {
 }
 
 func GetStudentCurrentSectionsInfo(c *fiber.Ctx) error {
-	studentId, err := c.ParamsInt("id")
-	if err != nil {
-		log.Error("Params for GetStudentCurrentSectionsInfo not int")
-	}
+	studentId, _ := c.ParamsInt("id")
 	log.Info(studentId)
 	sectionsList, err := StudentEnrolledSectionsId(studentId)
 	if err != nil {
@@ -168,10 +165,7 @@ func GetStudentCurrentSectionsInfo(c *fiber.Ctx) error {
 	}
 	var sectionIds []int
 	for _, section := range sectionsList {
-		id, err := strconv.Atoi(section.Id)
-		if err != nil {
-			log.Error("cannot parse section ID")
-		}
+		id, _ := strconv.Atoi(section.Id)
 		sectionIds = append(sectionIds, id)
 	}
 

@@ -33,25 +33,6 @@ func VerifyStaff() fiber.Handler {
 	}
 }
 
-func VerifySelfOrStaff() fiber.Handler {
-	return func(c *fiber.Ctx) error {
-
-		user := c.Locals("user").(*jwt.Token)
-		claims := user.Claims.(jwt.MapClaims)
-		role := claims["role"].(string)
-		id := claims["id"].(string)
-
-		if id != c.Params("id") && role != "staff" {
-			log.Info("Unauthorized: Not self or not staff")
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"message": "Unauthorized access",
-			})
-		}
-
-		return c.Next()
-	}
-}
-
 func jwtError(c *fiber.Ctx, err error) error {
 	if err.Error() == "Missing or malformed JWT" {
 		return c.Status(fiber.StatusBadRequest).
