@@ -12,8 +12,11 @@ export const StudentTable = () => {
   }
 
   const handleInspectStudent = (event, id, fname, lname) => {
-    console.log("click!");
     navigate("inspect", { state: { id: id, fname: fname, lname: lname } });
+  };
+
+  const handleEditStudent = (event, student) => {
+    navigate("edit_student", { state: { student: student } });
   };
 
   useEffect(() => {
@@ -27,10 +30,8 @@ export const StudentTable = () => {
       if (res.ok) {
         res.json().then((resJson) => {
           setResults(resJson);
-          console.log(resJson);
         });
       } else {
-        console.log(res);
         console.error("cannot fetch student list");
       }
     });
@@ -81,11 +82,18 @@ export const StudentTable = () => {
                       }
                       className="btn btn-primary btn-xs"
                     >
-                      Inspect
+                      Enrollments
                     </button>
                   </td>
                   <td>
-                    <button className=' btn btn-xs btn-secondary'>Edit</button>
+                    <button
+                      className=" btn btn-xs btn-secondary"
+                      onClick={(event) => {
+                        handleEditStudent(event, student);
+                      }}
+                    >
+                      Edit
+                    </button>
                   </td>
                 </tr>
               ))}
