@@ -1,14 +1,44 @@
 import {NavSidebar} from "../components/NavSidebar.jsx";
-import Card from "../components/Card.jsx";
-import {useAtomValue} from "jotai";
-import {nameAtom} from "../components/LoginSidebar.jsx";
+import {atom, useAtomValue, useSetAtom} from "jotai";
+import {idAtom, nameAtom} from "../components/LoginSidebar.jsx";
 import '../App.css';
+import {useEffect, useState} from "react";
+import {EnrollmentTable} from "../components/EnrollmentTable.jsx";
 
+
+export const currentlyEnrolledAtom = atom([]);
 export const Profile = () => {
 
     const name = useAtomValue(nameAtom)
+    const id = useAtomValue(idAtom)
+    const setCurrentlyEnrolledAtom = useSetAtom(currentlyEnrolledAtom)
+    const [enrolledCourses, setEnrolledCourses] = useState([]);
 
-    return (
+    useEffect(() => {
+
+        const jwtToken = sessionStorage.getItem('token')
+        fetch(`http://localhost:3000/student/search/${id}`, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Authorization': `Bearer ${jwtToken}`, // Add the 'Bearer ' prefix for JWT
+            },
+        })
+            .then(res => {
+                if(res.ok){
+                    res.json().then(r => {
+                        setEnrolledCourses(r)
+                        console.log(r)
+                    })
+                } else {
+                    console.log("fetch error")
+                    console.log(res.body)
+                }
+            })
+
+    }, []);
+
+     return (
         <div className='flex p-0 w-screen max-[800px]:flex-row max-[800px]:flex-wrap'>
             <NavSidebar/>
             <div className='w-full p-4 h-screen bg-gray-50'>
@@ -27,7 +57,8 @@ export const Profile = () => {
                     </div>
 
                     <div className="div4 mb-4 bg-white p-4 rounded-lg shadow-md">
-                        <h2 className="text-xl font-semibold">Progress Charts</h2>
+                        <h2 className="text-xl font-semibold">Registered Courses</h2>
+                        <EnrollmentTable courses={enrolledCourses}/>
                     </div>
 
                     <div className="div5 mb-4 bg-white p-4 rounded-lg shadow-md">
