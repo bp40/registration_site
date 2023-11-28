@@ -6,12 +6,12 @@ import {useEffect, useState} from "react";
 import {StudentEnrollmentTable} from "../components/StudentEnrollmentTable.jsx";
 
 
-export const currentlyEnrolledAtom = atom([]);
+export const enrolledIdAtom = atom([]);
 export const Profile = () => {
 
     const name = useAtomValue(nameAtom)
     const id = useAtomValue(idAtom)
-    const setCurrentlyEnrolledAtom = useSetAtom(currentlyEnrolledAtom)
+    const setEnrolledId = useSetAtom(enrolledIdAtom)
     const [enrolledCourses, setEnrolledCourses] = useState([]);
 
     useEffect(() => {
@@ -28,6 +28,8 @@ export const Profile = () => {
                 if(res.ok){
                     res.json().then(r => {
                         setEnrolledCourses(r)
+                        const sectionIds = r.map(sec => sec.section_id);
+                        setEnrolledId(sectionIds)
                         console.log(r)
                     })
                 } else {

@@ -1,10 +1,12 @@
 import { sectionsAtom } from "../routes/search.jsx";
-import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 import { calculateDayColor } from "../utils/utils.js";
+import {enrolledIdAtom} from "../routes/profile.jsx";
 
 const SearchResult = () => {
   const results = useAtomValue(sectionsAtom);
+  const enrolledIds = useAtomValue(enrolledIdAtom)
   const [courseCart, setCourseCart] = useState(() => {
     const storedCart = JSON.parse(sessionStorage.getItem("courseCart"));
     return storedCart || [];
@@ -56,15 +58,15 @@ const SearchResult = () => {
         <tbody>
           {found === false
             ? null
-            : mappedResults.map((item, index) => (
-                <tr key={item.section_id}>
-                  <th> {item.section_number}</th>
-                  <td> {item.course_code}</td>
-                  <td> {item.course_name}</td>
+            : mappedResults.map((course, index) => (
+                <tr key={course.section_id}>
+                  <th> {course.section_number}</th>
+                  <td> {course.course_code}</td>
+                  <td> {course.course_name}</td>
                   <td>
-                    {item.current_students < item.max_students ? (
+                    {course.current_students < course.max_students ? (
                       <div className="badge badge-success gap-2">Available</div>
-                    ) : item.current_students + 5 >= item.max_students ? (
+                    ) : course.current_students + 5 >= course.max_students ? (
                       <div className="badge badge-warning gap-2">
                         Near Capacity
                       </div>
@@ -73,24 +75,22 @@ const SearchResult = () => {
                     )}
                   </td>
                   <td>
-                    <div className={calculateDayColor(item.timeslot)}>
-                      {item.timeslot}
+                    <div className={calculateDayColor(course.timeslot)}>
+                      {course.timeslot}
                     </div>
                   </td>
                   <td>
-                    {courseCart.find(
-                      (section) => section.section_id === item.section_id,
-                    ) ? (
-                      <button className="btn btn-xs" disabled>
-                        Added
-                      </button>
+                    {courseCart.find((section) => section.section_id === course.section_id) || enrolledIds.includes(course.section_id) ? (
+                        <button className="btn btn-xs" disabled>
+                          {enrolledIds.includes(course.section_id) ? 'ENROLLING' : 'Added'}
+                        </button>
                     ) : (
-                      <button
-                        className="btn btn-xs"
-                        onClick={() => handleAddCourse(item)}
-                      >
-                        Add to Shortlist
-                      </button>
+                        <button
+                            className="btn btn-xs"
+                            onClick={() => handleAddCourse(course)}
+                        >
+                          Add to Shortlist
+                        </button>
                     )}
                   </td>
                 </tr>
