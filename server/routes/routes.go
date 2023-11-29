@@ -27,7 +27,6 @@ func SetupRoutes(app fiber.Router) {
 	// STUDENTS
 	student := app.Group("/student")
 	student.Use(middleware.Protected())
-	student.Get("/:id<int>", middleware.VerifyStaff(), services.GetStudentsById)
 	student.Get("/search/:id<int>", middleware.VerifySelfOrStaff(), services.GetStudentCurrentSectionsInfo)
 	student.Get("/all", middleware.VerifyStaff(), services.GetAllStudents)
 	student.Post("/new", middleware.VerifyStaff(), services.CreateStudent)

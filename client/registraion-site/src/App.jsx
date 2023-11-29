@@ -10,6 +10,7 @@ import { StaffDashboard } from "./routes/staffdashboard.jsx";
 import { StudentInfo } from "./routes/studentInfo.jsx";
 import { EditStudent } from "./routes/edit_student.jsx";
 import { Add_student } from "./routes/add_student.jsx";
+import {Enrollments} from "./routes/enrollments.jsx";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       <Route element={<PrivateRoutes />}>
         <Route path="/profile" element={<Profile />} exact />
         <Route path="/search" element={<Search />} exact />
+          <Route path="/enrollments" element={<Enrollments />} exact />
         <Route path="/register" element={<Register />} exact />
         <Route path="/staff/dashboard" element={<StaffDashboard />} exact />
         <Route

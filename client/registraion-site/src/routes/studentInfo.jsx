@@ -1,32 +1,16 @@
-import { useEffect, useState } from "react";
+
 import { useLocation } from "react-router-dom";
 import { EnrollmentTable } from "../components/EnrollmentTable.jsx";
 import { LoadingSpinner } from "../components/LoadingSpinner.jsx";
 import { StaffNavBar } from "../components/StaffNavBar.jsx";
+import {Warning} from "../components/Warning.jsx";
+import {useStudentEnrollments} from "../hooks/useStudentEnrollments.js";
 
 export const StudentInfo = () => {
-  const jwtToken = sessionStorage.getItem("token");
-  const [results, setResults] = useState([]);
   const { state } = useLocation();
   const { id, fname, lname } = state;
 
-  useEffect(() => {
-    fetch(`http://localhost:3000/student/search/${id}`, {
-      method: "GET",
-      mode: "cors",
-      headers: {
-        Authorization: `Bearer ${jwtToken}`, // Add the 'Bearer ' prefix for JWT
-      },
-    }).then((res) => {
-      if (res.ok) {
-        res.json().then((resJson) => {
-          setResults(resJson);
-        });
-      } else {
-        console.error("cannot fetch student from id");
-      }
-    });
-  }, []);
+  const { results, isLoading, isEmpty } = useStudentEnrollments(id)
 
   return (
     <div className="flex p-0 w-screen">
@@ -35,11 +19,14 @@ export const StudentInfo = () => {
         <h1 className="text-xl">
           Showing {fname} {lname}'s enrollments
         </h1>
-        {results == null || false ? (
-          <LoadingSpinner />
-        ) : (
-          <EnrollmentTable courses={results} />
-        )}
+        {
+          isLoading ? <LoadingSpinner />
+              :  !isEmpty ? (
+                  <EnrollmentTable courses={results} />
+              ) : (
+                  <Warning text="No enrolled courses"/>
+              )
+        }
       </div>
     </div>
   );

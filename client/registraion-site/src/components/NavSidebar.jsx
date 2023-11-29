@@ -1,5 +1,5 @@
 import {Link, useNavigate} from "react-router-dom";
-import Search from "../routes/search.jsx";
+
 
 export const NavSidebar = () => {
 
@@ -23,9 +23,17 @@ export const NavSidebar = () => {
                     </Link>
                 </li>
                 <li>
-                    <Link to='/search' className="flex items-center space-x-2 hover:bg-violet-800 hover:text-white">
+                    <Link to='/enrollments' className="flex items-center space-x-2 hover:bg-violet-800 hover:text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Enrollment History</span>
+                    </Link>
+                </li>
+                <li>
+                    <Link to='/search' className="flex items-center space-x-2 hover:bg-violet-800 hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="square" d="M18.5 18.3l-5.4-5.4"/><circle cx="8" cy="8" r="7"/>
                         </svg>
                         <span>Search Course</span>
                     </Link>

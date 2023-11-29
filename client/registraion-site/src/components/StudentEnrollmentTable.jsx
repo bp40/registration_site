@@ -22,6 +22,8 @@ export const StudentEnrollmentTable = ({ courses }) => {
             ...course,
             timeslot: timeslotsText[course.timeslot_id],
         }));
+
+        mappedResults = mappedResults.filter((course) => course.status === "ENROLLED")
     }
 
     return (

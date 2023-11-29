@@ -5,8 +5,9 @@ import '../App.css';
 import {useEffect, useState} from "react";
 import {StudentEnrollmentTable} from "../components/StudentEnrollmentTable.jsx";
 
-
+export const enrolledCourses = atom([])
 export const enrolledIdAtom = atom([]);
+
 export const Profile = () => {
 
     const name = useAtomValue(nameAtom)
