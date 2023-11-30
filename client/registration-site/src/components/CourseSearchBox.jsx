@@ -39,7 +39,7 @@ const CourseSearchBox = () => {
         const jwtToken = sessionStorage.getItem('token')
 
         if (queryType === 'name'){
-            fetch(`:3000/sections/name/?course_name=${courseName}`, {
+            fetch(`/sections/name/?course_name=${courseName}`, {
                 method: 'GET',
                 mode: 'cors',
                 headers: {
@@ -59,7 +59,7 @@ const CourseSearchBox = () => {
             })
 
         } else if (queryType === 'code') {
-            fetch(`:3000/sections/courseCode/?course_code=${courseCode}`, {
+            fetch(`/sections/courseCode/?course_code=${courseCode}`, {
                 method: 'GET',
                 mode: 'cors',
                 headers: {

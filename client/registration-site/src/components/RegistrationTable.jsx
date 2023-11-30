@@ -39,7 +39,7 @@ const RegistrationTable = () => {
     formData.append("student_id", id);
     formData.append("all_sections_csv", sectionsCSV);
 
-    fetch(`:3000/register`, {
+    fetch(`/register`, {
       method: "POST",
       mode: "cors",
       headers: {

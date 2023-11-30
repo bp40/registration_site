@@ -26,7 +26,7 @@ const LoginSidebar = () => {
       password: pass,
     };
 
-    fetch(":3000/auth/login", {
+    fetch("/auth/login", {
       method: "POST",
       mode: "cors",
       headers: { "Content-Type": "application/json" },

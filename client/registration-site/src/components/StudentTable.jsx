@@ -20,7 +20,7 @@ export const StudentTable = () => {
   };
 
   useEffect(() => {
-    fetch(`:3000/student/all`, {
+    fetch(`/student/all`, {
       method: "GET",
       mode: "cors",
       headers: {
