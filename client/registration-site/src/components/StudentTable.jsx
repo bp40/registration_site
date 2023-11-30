@@ -20,7 +20,7 @@ export const StudentTable = () => {
   };
 
   useEffect(() => {
-    fetch(`http://localhost:3000/student/all`, {
+    fetch(`:3000/student/all`, {
       method: "GET",
       mode: "cors",
       headers: {

@@ -36,7 +36,7 @@ export const EditStudent = () => {
 
     const jwtToken = sessionStorage.getItem("token");
 
-    fetch(`http://localhost:3000/student/edit`, {
+    fetch(`:3000/student/edit`, {
       method: "PATCH",
       mode: "cors",
       headers: {
@@ -56,7 +56,7 @@ export const EditStudent = () => {
 
   const handleDelete = () => {
     const jwtToken = sessionStorage.getItem("token")
-    fetch(`http://localhost:3000/student/${student.StudentId}`, {
+    fetch(`:3000/student/${student.StudentId}`, {
       method: "DELETE",
       mode: "cors",
       headers: {

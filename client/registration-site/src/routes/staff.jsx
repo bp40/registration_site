@@ -25,7 +25,7 @@ const Staff = () => {
         };
 
 
-        fetch("http://localhost:3000/staff/login", {
+        fetch(":3000/staff/login", {
             method: "POST",
             mode: "cors",
             headers: { "Content-Type": "application/json" },

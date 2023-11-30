@@ -26,7 +26,7 @@ export const Add_student = () => {
     setIsLoading(true);
     const jwtToken = sessionStorage.getItem("token");
 
-    fetch("http://localhost:3000/student/new", {
+    fetch(":3000/student/new", {
       method: "POST",
       mode: "cors",
       headers: {

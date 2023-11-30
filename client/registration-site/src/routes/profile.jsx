@@ -18,7 +18,7 @@ export const Profile = () => {
     useEffect(() => {
 
         const jwtToken = sessionStorage.getItem('token')
-        fetch(`http://localhost:3000/student/search/${id}`, {
+        fetch(`:3000/student/search/${id}`, {
             method: 'GET',
             mode: 'cors',
             headers: {
