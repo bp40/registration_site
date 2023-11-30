@@ -3,6 +3,7 @@ package middleware
 import (
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/golang-jwt/jwt/v5"
 	"os"
 )
@@ -22,6 +23,26 @@ func VerifyStaff() fiber.Handler {
 		role := claims["role"].(string)
 
 		if role != "staff" {
+			log.Info("invalid staff login detected")
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message": "Unauthorized access",
+			})
+		}
+
+		return c.Next()
+	}
+}
+
+func VerifySelfOrStaff() fiber.Handler {
+	return func(c *fiber.Ctx) error {
+
+		user := c.Locals("user").(*jwt.Token)
+		claims := user.Claims.(jwt.MapClaims)
+		role := claims["role"].(string)
+		id := claims["id"].(string)
+
+		if id != c.Params("id") && role != "staff" {
+			log.Info("Unauthorized: Not self or not staff")
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"message": "Unauthorized access",
 			})

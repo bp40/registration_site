@@ -19,7 +19,7 @@ func CheckPasswordHash(password, hash string) bool {
 
 func getStudentFromId(id string) (*models.AuthStudent, error) {
 	var student models.AuthStudent
-	stmt, err := db.DB.Preparex(`SELECT student_id, password FROM students WHERE student_id = ?`)
+	stmt, err := db.DB.Preparex(`SELECT student_id, first_name ,password FROM students WHERE student_id = ?`)
 	err = stmt.Get(&student, id)
 
 	if err != nil {
@@ -45,10 +45,12 @@ func Login(c *fiber.Ctx) error {
 	studentData, err := getStudentFromId(input.StudentId)
 
 	if err != nil {
+		log.Info("fail user not found")
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "failed", "message": "user not found"})
 	}
 
 	if !CheckPasswordHash(input.Password, studentData.Password) {
+		log.Info("fail credentials")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "failed", "message": "invalid password"})
 	}
 
@@ -61,10 +63,11 @@ func Login(c *fiber.Ctx) error {
 
 	t, err := token.SignedString([]byte(os.Getenv("JWTSIGN")))
 	if err != nil {
+		log.Info("fail jwt")
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "login success", "token": t})
+	return c.JSON(fiber.Map{"status": "success", "message": "login success", "token": t, "name": studentData.FirstName})
 }
 
 func getIdFromJWT(c *fiber.Ctx) int {
