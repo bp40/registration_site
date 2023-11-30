@@ -12,6 +12,21 @@ type Section struct {
 	RoomNumber    int    `json:"room_number" db:"room_number"`
 }
 
+type SectionWebResult struct {
+	Section
+	CourseName      string `json:"course_name" db:"course_name"`
+	CurrentStudents string `json:"current_students" db:"current_students"`
+}
+
+type WebSection struct {
+	Section
+	CourseName      string `json:"course_name" db:"course_name"`
+	Credits         int    `json:"credits" db:"credits"`
+	InstructorFname string `json:"instructor_fname" db:"first_name"`
+	InstructorLname string `json:"instructor_lname" db:"last_name"`
+	CurrentEnrolled int    `json:"current_enrolled" db:"current_enrolled"`
+}
+
 type SimpleSection struct {
 	Id       string `db:"section_id"`
 	Timeslot int    `db:"timeslot_id"`
