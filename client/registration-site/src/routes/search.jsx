@@ -1,6 +1,5 @@
 import {NavSidebar} from "../components/NavSidebar.jsx";
 import CourseSearchBox from "../components/CourseSearchBox.jsx";
-import RegistrationTable from "../components/RegistrationTable.jsx";
 import {atom} from "jotai";
 import SearchResult from "../components/SearchResult.jsx";
 

@@ -10,6 +10,7 @@ func SetupRoutes(app fiber.Router) {
 
 	// HOME
 	app.Static("/", "../client/registration-site/dist")
+	app.Get("/healthz", services.Healthz)
 
 	// AUTH
 	auth := app.Group("/auth")
