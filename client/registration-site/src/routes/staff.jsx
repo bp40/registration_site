@@ -1,4 +1,3 @@
-import {useAtom} from "jotai";
 import {useState} from "react";
 import {Modal} from "../components/modal.jsx";
 import {useNavigate} from "react-router-dom";

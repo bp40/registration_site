@@ -1,9 +1,9 @@
-import { calculateDayColor } from "../utils/utils.js";
-import { useEffect, useState } from "react";
-import { useAtomValue } from "jotai";
-import { idAtom } from "./LoginSidebar.jsx";
-import { useNavigate } from "react-router-dom";
-import { Modal } from "./modal.jsx";
+import {calculateDayColor} from "../utils/utils.js";
+import {useState} from "react";
+import {useAtomValue} from "jotai";
+import {idAtom} from "./LoginSidebar.jsx";
+import {useNavigate} from "react-router-dom";
+import {Modal} from "./modal.jsx";
 
 const RegistrationTable = () => {
   const navigate = useNavigate();

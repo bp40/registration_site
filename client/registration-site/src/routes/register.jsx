@@ -1,6 +1,5 @@
-import { NavSidebar } from "../components/NavSidebar.jsx";
+import {NavSidebar} from "../components/NavSidebar.jsx";
 import RegistrationTable from "../components/RegistrationTable.jsx";
-import CourseSearchBox from "../components/CourseSearchBox.jsx";
 
 const Register = () => {
   return (
