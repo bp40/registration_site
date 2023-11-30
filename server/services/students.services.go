@@ -102,6 +102,15 @@ func UpdateStudent(c *fiber.Ctx) error {
 }
 
 func DeleteStudent(c *fiber.Ctx) error {
+
+	id := c.Params("id")
+
+	_, err := db.DB.Exec("UPDATE registrations SET status = 'DROPPED' WHERE student_id=?;", id)
+	if err != nil {
+		log.Error(err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"status": "delete error"})
+	}
+
 	return c.Status(fiber.StatusNoContent).JSON(fiber.Map{"status": "deleted"})
 }
 

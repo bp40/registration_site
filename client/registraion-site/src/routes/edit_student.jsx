@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Warning } from "../components/Warning.jsx";
 import { SelectBox } from "../components/SelectBox.jsx";
 import { LoadingSpinner } from "../components/LoadingSpinner.jsx";
+import {Modal} from "../components/modal.jsx";
 
 export const EditStudent = () => {
   const { state } = useLocation();
@@ -53,8 +54,24 @@ export const EditStudent = () => {
       });
   };
 
+  const handleDelete = () => {
+    const jwtToken = sessionStorage.getItem("token")
+    fetch(`http://localhost:3000/student/${student.StudentId}`, {
+      method: "DELETE",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    }).then(res => {
+      document.getElementById("my_modal_1").showModal();
+      navigate("/staff/dashboard")
+    })
+  }
+
   return (
     <div className="flex p-0 w-screen">
+      <Modal message={`Successfully deleted student with id ${student.StudentId}`} />
       <StaffNavBar />
       <div className="p-4">
         <h1 className="text-xl">
@@ -128,17 +145,20 @@ export const EditStudent = () => {
             ) : changed ? (
               <button
                 type="submit"
-                className="btn btn-primary"
+                className="btn btn-primary block basis-3/12"
                 onClick={handleEditSubmit}
               >
                 Save Changes
               </button>
             ) : (
-              <button type="submit" className="btn btn-primary" disabled>
+              <button type="submit" className="btn btn-primary block basis-3/12" disabled>
                 Save Changes
               </button>
             )}
           </form>
+          <button onClick={handleDelete} className="btn btn-error mt-32" >
+            Delete Student (Drop all)
+          </button>
         </div>
       </div>
     </div>
